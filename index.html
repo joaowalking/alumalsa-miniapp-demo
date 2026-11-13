@@ -1,0 +1,745 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123d2a">
+<title>ALUMALSA CONTROL</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+:root {
+  --green:#176b46;
+  --dark:#123d2a;
+  --bg:#f3f6f4;
+  --border:#e0e8e2;
+  --muted:#697970;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:#1d3025;
+  font-family:-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Arial,sans-serif;
+  font-size:14px;
+}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+header {
+  background:linear-gradient(135deg,#102c20,#21764e);
+  color:white;
+  padding:25px 20px 30px;
+  border-radius:0 0 24px 24px;
+}
+.brand {
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+.demo {
+  display:inline-block;
+  font-size:10px;
+  padding:5px 9px;
+  background:#ffffff23;
+  border-radius:20px;
+  margin-top:8px;
+}
+header h1 {margin:25px 0 4px;font-size:25px}
+header p {margin:0;color:#d2e6da}
+main {
+  max-width:650px;
+  margin:auto;
+  padding:18px 15px 105px;
+}
+h2 {font-size:17px;margin:20px 0 12px}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+.stat,.card,.panel {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:15px;
+}
+.stat {text-align:center}
+.stat strong {display:block;font-size:27px}
+.stat small {font-size:11px;color:var(--muted)}
+.red {color:#bf343a}
+.orange {color:#c37b19}
+.green {color:var(--green)}
+.actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.action {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:19px 12px;
+  text-align:left;
+  font-weight:700;
+  min-height:105px;
+}
+.action span {
+  display:block;
+  font-size:26px;
+  margin-bottom:12px;
+  color:var(--green);
+}
+.panel {margin-top:15px}
+label {
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin:13px 0;
+}
+input,select,textarea {
+  display:block;
+  width:100%;
+  padding:13px;
+  border:1px solid #d6e2d8;
+  border-radius:10px;
+  margin-top:6px;
+  background:#fff;
+  color:#1d3025;
+}
+textarea {min-height:105px;resize:vertical}
+.row {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.primary {
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:11px;
+  background:var(--green);
+  color:white;
+  font-weight:800;
+}
+.card {margin:10px 0}
+.card-head,.card-foot {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.card-head strong {font-size:14px}
+.card p {line-height:1.5;white-space:pre-wrap}
+.meta {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:7px;
+}
+.card-foot {
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  margin-top:12px;
+}
+.chip {
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:800;
+}
+.alta {background:#ffebeb;color:#be3038}
+.media {background:#fff3df;color:#ab6914}
+.baja {background:#e5f4e9;color:#187142}
+.small {
+  padding:8px 10px;
+  border:0;
+  border-radius:8px;
+  background:#e8f3ec;
+  color:var(--green);
+  font-size:11px;
+  font-weight:800;
+}
+.buttons {display:flex;gap:6px;flex-wrap:wrap}
+.status {font-size:11px;font-weight:800}
+.filters {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.filters input {grid-column:1/-1}
+.empty {
+  padding:25px;
+  text-align:center;
+  border:1px dashed #b8cfc0;
+  border-radius:14px;
+  color:var(--muted);
+}
+.notice {
+  background:#e8f2e9;
+  border-radius:12px;
+  padding:13px;
+  font-size:12px;
+  margin-top:18px;
+  line-height:1.5;
+}
+nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:white;
+  border-top:1px solid var(--border);
+  padding:9px 5px calc(10px + env(safe-area-inset-bottom));
+}
+nav button {
+  border:0;
+  background:transparent;
+  color:#74847a;
+  font-size:11px;
+  padding:8px 2px;
+}
+nav button span {
+  display:block;
+  font-size:22px;
+  margin-bottom:4px;
+}
+nav button.active {
+  color:var(--green);
+  font-weight:800;
+  background:#e8f4eb;
+  border-radius:9px;
+}
+section[hidden] {display:none}
+.secondary {
+  padding:11px;
+  border:1px solid #bdd7c4;
+  border-radius:10px;
+  color:var(--green);
+  background:white;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">◈ ALUMALSA CONTROL</div>
+  <span class="demo">● DEMO LOCAL</span>
+  <h1 id="pageTitle">Panel de producción</h1>
+  <p id="pageSubtitle">Incidencias y seguimiento</p>
+</header>
+
+<main>
+
+<section id="home">
+  <h2>Estado general</h2>
+  <div class="stats">
+    <div class="stat">
+      <strong class="red" id="nPending">0</strong>
+      <small>Pendientes</small>
+    </div>
+    <div class="stat">
+      <strong class="orange" id="nWorking">0</strong>
+      <small>En curso</small>
+    </div>
+    <div class="stat">
+      <strong class="green" id="nClosed">0</strong>
+      <small>Resueltas</small>
+    </div>
+  </div>
+
+  <h2>Accesos rápidos</h2>
+  <div class="actions">
+    <button class="action" onclick="go('new')">
+      <span>⊕</span>Nueva incidencia
+    </button>
+    <button class="action" onclick="go('pending')">
+      <span>☷</span>Ver pendientes
+    </button>
+    <button class="action" onclick="go('history')">
+      <span>▤</span>Historial
+    </button>
+    <button class="action" onclick="copySummary()">
+      <span>↗</span>Copiar resumen
+    </button>
+  </div>
+
+  <h2>Actividad reciente</h2>
+  <div id="recent"></div>
+
+  <div class="notice">
+    Esta versión de prueba guarda los registros
+    únicamente en este dispositivo.
+    No envía datos a otros usuarios.
+  </div>
+</section>
+
+<section id="new" hidden>
+  <h2>Nueva incidencia</h2>
+  <div class="panel">
+    <form id="incidentForm">
+
+      <div class="row">
+        <label>Sección
+          <select name="area" required>
+            <option value="MEC">Mecánica</option>
+            <option value="ELEC">Eléctrica</option>
+            <option value="FUS">Fusión</option>
+            <option value="MACH">Machería</option>
+            <option value="TT">Tratamiento térmico</option>
+            <option value="LP">Líquidos penetrantes</option>
+            <option value="PROD">Producción</option>
+            <option value="CAL">Calidad</option>
+          </select>
+        </label>
+        <label>Prioridad
+          <select name="priority">
+            <option value="media">Media</option>
+            <option value="alta">Alta</option>
+            <option value="baja">Baja</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Equipo / instalación
+        <input name="equipment"
+          maxlength="80"
+          placeholder="Ej. SW14, Horno TF2">
+      </label>
+
+      <label>Descripción
+        <textarea name="description"
+          maxlength="1000"
+          placeholder="Describe la incidencia..."
+          required></textarea>
+      </label>
+
+      <div class="row">
+        <label>Responsable
+          <select name="assignee">
+            <option>Sin asignar</option>
+            <option>Mantenimiento mecánico</option>
+            <option>Mantenimiento eléctrico</option>
+            <option>Producción</option>
+            <option>Calidad</option>
+            <option>Tratamiento térmico</option>
+          </select>
+        </label>
+        <label>Turno
+          <select name="shift">
+            <option>Mañana</option>
+            <option>Tarde</option>
+            <option>Noche</option>
+            <option>Sin turno</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="primary" type="submit">
+        ✓ Guardar incidencia
+      </button>
+    </form>
+  </div>
+</section>
+
+<section id="pending" hidden>
+  <h2>Incidencias abiertas</h2>
+
+  <div class="filters">
+    <input id="searchPending"
+      placeholder="Buscar incidencia...">
+
+    <select id="filterArea">
+      <option value="">Todas las secciones</option>
+      <option value="MEC">Mecánica</option>
+      <option value="ELEC">Eléctrica</option>
+      <option value="FUS">Fusión</option>
+      <option value="MACH">Machería</option>
+      <option value="TT">Tratamiento térmico</option>
+      <option value="LP">Líquidos penetrantes</option>
+      <option value="PROD">Producción</option>
+      <option value="CAL">Calidad</option>
+    </select>
+
+    <select id="filterPriority">
+      <option value="">Todas las prioridades</option>
+      <option value="alta">Alta</option>
+      <option value="media">Media</option>
+      <option value="baja">Baja</option>
+    </select>
+  </div>
+  <div id="pendingList"></div>
+</section>
+
+<section id="history" hidden>
+  <h2>Historial completo</h2>
+  <input id="searchHistory"
+    placeholder="Buscar en historial...">
+
+  <select id="filterStatus">
+    <option value="">Todos los estados</option>
+    <option value="pendiente">Pendientes</option>
+    <option value="curso">En curso</option>
+    <option value="resuelta">Resueltas</option>
+  </select>
+
+  <div id="historyList"></div>
+
+  <h2>Herramientas de prueba</h2>
+  <button class="secondary" onclick="resetDemo()">
+    Restablecer datos de ejemplo
+  </button>
+</section>
+
+</main>
+
+<nav>
+  <button data-tab="home" class="active" onclick="go('home')">
+    <span>⌂</span>Inicio
+  </button>
+  <button data-tab="new" onclick="go('new')">
+    <span>⊕</span>Nueva
+  </button>
+  <button data-tab="pending" onclick="go('pending')">
+    <span>☷</span>Pendientes
+  </button>
+  <button data-tab="history" onclick="go('history')">
+    <span>▤</span>Historial
+  </button>
+</nav>
+
+<script>
+"use strict";
+
+const tg = window.Telegram?.WebApp;
+if(tg) {
+  tg.ready();
+  tg.expand();
+}
+
+const KEY = "alumalsa_demo_v1";
+
+const areas = {
+  MEC:"Mecánica",
+  ELEC:"Eléctrica",
+  FUS:"Fusión",
+  MACH:"Machería",
+  TT:"Tratamiento térmico",
+  LP:"Líquidos penetrantes",
+  PROD:"Producción",
+  CAL:"Calidad"
+};
+
+const $ = id => document.getElementById(id);
+
+function examples() {
+  const now = Date.now();
+  return [
+    {
+      id:"MEC-0001",
+      area:"MEC",
+      equipment:"SW14",
+      description:"Pérdida de aceite. Revisar equipo.",
+      priority:"alta",
+      assignee:"Mantenimiento mecánico",
+      shift:"Tarde",
+      status:"pendiente",
+      created:now-3600000
+    },
+    {
+      id:"TT-0001",
+      area:"TT",
+      equipment:"Horno TF2",
+      description:"Comprobar registro del ciclo térmico.",
+      priority:"media",
+      assignee:"Tratamiento térmico",
+      shift:"Mañana",
+      status:"curso",
+      created:now-7200000
+    },
+    {
+      id:"FUS-0001",
+      area:"FUS",
+      equipment:"Horno Striko",
+      description:"Comprobación visual realizada.",
+      priority:"baja",
+      assignee:"Producción",
+      shift:"Noche",
+      status:"resuelta",
+      created:now-86400000
+    }
+  ];
+}
+
+function load() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY));
+    if(Array.isArray(saved)) return saved;
+  } catch(e) {}
+  return examples();
+}
+
+let records = load();
+
+function save() {
+  try {
+    localStorage.setItem(KEY,JSON.stringify(records));
+  } catch(e) {
+    alert("No se ha podido guardar la información.");
+  }
+}
+if(localStorage.getItem(KEY) === null) save();
+
+function safe(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    })[c]
+  );
+}
+
+function dateText(value) {
+  return new Date(value).toLocaleString("es-ES",{
+    day:"2-digit",
+    month:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+function nextId(area) {
+  const max = records
+    .filter(r => r.area === area)
+    .reduce((m,r) => {
+      return Math.max(
+        m,Number(r.id.split("-").pop()) || 0
+      );
+    },0);
+  return area+"-"+String(max+1).padStart(4,"0");
+}
+
+function card(r) {
+  const state = {
+    pendiente:"Pendiente",
+    curso:"En curso",
+    resuelta:"Resuelta"
+  };
+
+  let buttons = "";
+  if(r.status === "pendiente") {
+    buttons += `<button class="small"
+      onclick="setStatus('${r.id}','curso')">
+      Iniciar</button>`;
+  }
+  if(r.status === "curso") {
+    buttons += `<button class="small"
+      onclick="setStatus('${r.id}','resuelta')">
+      Resolver</button>`;
+  }
+  if(r.status === "resuelta") {
+    buttons += `<button class="small"
+      onclick="setStatus('${r.id}','pendiente')">
+      Reabrir</button>`;
+  }
+
+  return `
+    <div class="card">
+      <div class="card-head">
+        <strong>${safe(r.id)} · ${safe(r.equipment || "Sin equipo")}</strong>
+        <span class="chip ${safe(r.priority)}">
+          ${safe(r.priority).toUpperCase()}
+        </span>
+      </div>
+      <p>${safe(r.description)}</p>
+      <div class="meta">
+        ${safe(areas[r.area] || r.area)}
+        · ${safe(dateText(r.created))}
+      </div>
+      <div class="meta">
+        Responsable: ${safe(r.assignee)}
+        · Turno: ${safe(r.shift)}
+      </div>
+      <div class="card-foot">
+        <span class="status">${state[r.status] || "Pendiente"}</span>
+        <div class="buttons">${buttons}</div>
+      </div>
+    </div>`;
+}
+
+function renderList(id,rows) {
+  const target = $(id);
+  target.innerHTML = rows.length
+    ? rows.map(card).join("")
+    : '<div class="empty">Sin incidencias</div>';
+}
+
+function render() {
+  $("nPending").textContent =
+    records.filter(r=>r.status==="pendiente").length;
+  $("nWorking").textContent =
+    records.filter(r=>r.status==="curso").length;
+  $("nClosed").textContent =
+    records.filter(r=>r.status==="resuelta").length;
+
+  const sorted = [...records]
+    .sort((a,b)=>b.created-a.created);
+
+  renderList("recent",sorted.slice(0,3));
+
+  const query = $("searchPending").value.toLowerCase();
+  const area = $("filterArea").value;
+  const priority = $("filterPriority").value;
+
+  const pending = sorted.filter(r => {
+    const text = [
+      r.id,r.equipment,r.description,
+      r.assignee,areas[r.area]
+    ].join(" ").toLowerCase();
+
+    return r.status !== "resuelta"
+      && text.includes(query)
+      && (!area || r.area===area)
+      && (!priority || r.priority===priority);
+  });
+  renderList("pendingList",pending);
+
+  const historyQuery =
+    $("searchHistory").value.toLowerCase();
+  const status = $("filterStatus").value;
+
+  renderList("historyList",sorted.filter(r=>{
+    const text = [
+      r.id,r.description,r.equipment,
+      r.assignee,areas[r.area]
+    ].join(" ").toLowerCase();
+
+    return text.includes(historyQuery)
+      && (!status || r.status===status);
+  }));
+}
+
+function setStatus(id,status) {
+  const record = records.find(r=>r.id===id);
+  if(!record) return;
+  record.status=status;
+  record.updated=Date.now();
+  save();
+  render();
+}
+
+const titles = {
+  home:["Panel de producción","Incidencias y seguimiento"],
+  new:["Nueva incidencia","Registrar un nuevo aviso"],
+  pending:["Pendientes","Incidencias abiertas"],
+  history:["Historial","Todos los registros"]
+};
+
+function go(page) {
+  ["home","new","pending","history"].forEach(id=>{
+    $(id).hidden=id!==page;
+  });
+
+  document.querySelectorAll("nav button")
+    .forEach(b=>{
+      b.classList.toggle(
+        "active",b.dataset.tab===page
+      );
+    });
+
+  $("pageTitle").textContent=titles[page][0];
+  $("pageSubtitle").textContent=titles[page][1];
+
+  render();
+  window.scrollTo(0,0);
+}
+
+$("incidentForm").addEventListener("submit",e=>{
+  e.preventDefault();
+
+  const data = new FormData(e.target);
+  const area = data.get("area");
+  const description =
+    String(data.get("description") || "").trim();
+
+  if(!description) {
+    alert("Introduce una descripción.");
+    return;
+  }
+
+  const record = {
+    id:nextId(area),
+    area:area,
+    equipment:String(data.get("equipment") || "").trim(),
+    description:description,
+    priority:data.get("priority"),
+    assignee:data.get("assignee"),
+    shift:data.get("shift"),
+    status:"pendiente",
+    created:Date.now()
+  };
+
+  records.push(record);
+  save();
+  e.target.reset();
+
+  go("pending");
+  alert("Incidencia "+record.id+" registrada.");
+});
+
+[
+  "searchPending",
+  "filterArea",
+  "filterPriority",
+  "searchHistory",
+  "filterStatus"
+].forEach(id=>{
+  $(id).addEventListener("input",render);
+});
+
+function formatRecord(r) {
+  return `${r.id} | ${areas[r.area]}
+Equipo: ${r.equipment}
+Prioridad: ${r.priority}
+Descripción: ${r.description}
+Responsable: ${r.assignee}
+Turno: ${r.shift}
+Estado: ${r.status}`;
+}
+
+async function copySummary() {
+  const open = records.filter(
+    r=>r.status!=="resuelta"
+  );
+  const summary = "ALUMALSA CONTROL\n\n"+
+    open.map(formatRecord).join("\n\n");
+
+  try {
+    await navigator.clipboard.writeText(summary);
+    alert("Resumen copiado.");
+  } catch(e) {
+    alert("No se pudo copiar el resumen.");
+  }
+}
+
+function resetDemo() {
+  if(!confirm("¿Restablecer los datos de prueba?"))
+    return;
+
+  records=examples();
+  save();
+  go("home");
+}
+
+render();
+</script>
+
+</body>
+</html>
