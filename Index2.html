@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#102722" />
+  <meta name="description" content="ALUMALSA CONTROL · Mini App de demostración para incidencias y tareas." />
+  <title>ALUMALSA CONTROL v0.2 · Personal y producción</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?65"></script>
+  <style>
+    :root { --bg:#f3f6f4; --surface:#fff; --dark:#102722; --green:#176c47; --green-soft:#e9f5ed; --muted:#64736d; --line:#e3ebe6; --red:#b93239; --red-soft:#fff0ee; --orange:#b56c13; --orange-soft:#fff5e7; --shadow:0 10px 28px rgba(28,50,35,.05); color-scheme:light; }
+    * { box-sizing:border-box; }
+    html { min-height:100%; -webkit-text-size-adjust:100%; }
+    body { margin:0; background:var(--bg); color:#1b2a23; font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+    button,input,textarea,select { font:inherit; }
+    button { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible { outline:3px solid #8dcbb0; outline-offset:2px; }
+    .shell { max-width:600px; margin:0 auto; min-height:100dvh; padding-bottom:calc(95px + env(safe-area-inset-bottom)); }
+    .hero { background:linear-gradient(145deg,#102722,#1f674b); padding:22px 20px 27px; color:white; border-radius:0 0 25px 25px; }
+    .hero-top { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .logo { width:40px; height:40px; border-radius:13px; background:rgba(255,255,255,.13); display:grid; place-items:center; font-weight:900; font-size:23px; border:1px solid rgba(255,255,255,.2); }
+    .brand-name { font-weight:800; letter-spacing:.7px; font-size:13px; }
+    .eyebrow { font-size:11px; letter-spacing:1px; color:#bfdfcc; text-transform:uppercase; font-weight:700; }
+    .demo-pill { font-size:11px; border:1px solid #cce9d9; padding:5px 9px; border-radius:999px; color:#effcf4; white-space:nowrap; }
+    .hero h1 { font-size:26px; letter-spacing:-.7px; margin:26px 0 3px; line-height:1.2; }
+    .hero p { color:#d4e6dc; font-size:13px; margin:0; }
+    main { padding:18px 16px 16px; }
+    section[hidden] { display:none !important; }
+    .kicker { font-size:11px; text-transform:uppercase; letter-spacing:1.1px; color:var(--muted); font-weight:800; margin:3px 0 10px; }
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+    .stat { background:var(--surface); border:1px solid var(--line); padding:14px 11px; border-radius:15px; box-shadow:var(--shadow); }
+    .stat b { font-size:28px; line-height:1; display:block; font-weight:800; }
+    .stat span { color:var(--muted); font-size:11px; display:block; margin-top:8px; }
+    .stat.danger b { color:var(--red); }
+    .stat.orange b { color:var(--orange); }
+    .stat.green b { color:var(--green); }
+    .section-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:23px 0 10px; }
+    .section-head h2,.view-title { font-size:17px; font-weight:800; letter-spacing:-.25px; margin:0; }
+    .linkbtn { color:var(--green); background:none; border:0; font-size:13px; font-weight:750; padding:6px 0; }
+    .actions { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .action { text-align:left; background:white; padding:16px 13px; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); min-height:116px; display:flex; flex-direction:column; justify-content:space-between; }
+    .action .ico { display:grid; width:36px; height:36px; place-items:center; border-radius:11px; background:var(--green-soft); color:var(--green); font-size:20px; }
+    .action span:last-child { font-size:13px; font-weight:800; }
+    .hint { font-size:12px; color:var(--muted); margin:7px 0 16px; }
+    .record-list { display:flex; flex-direction:column; gap:10px; }
+    .record { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; box-shadow:var(--shadow); }
+    .record-top,.record-meta,.record-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .record-id { font-weight:850; font-size:14px; }
+    .chip { padding:4px 8px; border-radius:999px; font-size:10px; font-weight:800; white-space:nowrap; }
+    .chip.high { background:var(--red-soft); color:var(--red); }
+    .chip.medium { background:var(--orange-soft); color:var(--orange); }
+    .chip.low { background:var(--green-soft); color:var(--green); }
+    .record-desc { font-size:14px; margin:9px 0; overflow-wrap:anywhere; white-space:pre-wrap; }
+    .record-meta { color:var(--muted); font-size:11px; flex-wrap:wrap; justify-content:flex-start; gap:7px; }
+    .record-footer { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
+    .status { color:var(--muted); font-size:11px; font-weight:800; }
+    .status.pending { color:var(--red); }
+    .status.working { color:var(--orange); }
+    .status.closed { color:var(--green); }
+    .small-btn { background:var(--green-soft); color:var(--green); font-weight:800; font-size:11px; border:0; border-radius:9px; padding:8px 10px; }
+    .small-btn.secondary { color:#4b5a52; background:#f0f3f1; }
+    .record-btns { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    .panel { background:white; border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow); margin-top:13px; }
+    .panel h2 { font-size:17px; margin:0 0 4px; }
+    .panel p { color:var(--muted); font-size:12px; margin:0 0 17px; }
+    .field { display:block; margin:0 0 14px; }
+    .field > span { display:block; margin-bottom:6px; font-size:12px; font-weight:750; }
+    .field input,.field select,.field textarea,.filter { display:block; width:100%; border:1px solid #d8e3da; background:#fbfdfb; color:#18251d; border-radius:11px; padding:12px; min-height:45px; outline:none; }
+    textarea { resize:vertical; min-height:108px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+    .primary { background:var(--green); color:white; border:0; border-radius:12px; padding:13px 14px; font-weight:800; width:100%; min-height:49px; }
+    .primary:active { transform:scale(.995); }
+    .outlined { background:#fff; border:1px solid #cbdcd0; border-radius:11px; min-height:40px; padding:9px 13px; font-weight:700; color:var(--green); }
+    .filters { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:11px 0 15px; }
+    .filters .wide { grid-column:1 / -1; }
+    .empty { text-align:center; border:1px dashed #bfd2c3; border-radius:17px; padding:28px 15px; color:var(--muted); background:#ffffff9e; }
+    .empty strong { display:block; color:#304639; margin-bottom:6px; }
+    .note { border-radius:12px; padding:12px; background:#eaf2eb; color:#365644; font-size:12px; margin:16px 0 3px; }
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:5; background:rgba(255,255,255,.98); border-top:1px solid var(--line); padding:9px max(12px,calc((100vw - 590px)/2)) calc(9px + env(safe-area-inset-bottom)); display:grid; grid-template-columns:repeat(5,1fr); box-shadow:0 -3px 20px #13221a09; }
+    .tab { border:0; background:transparent; color:#6b7d70; display:grid; justify-items:center; gap:4px; font-size:10px; font-weight:750; padding:6px 0; border-radius:10px; }
+    .tab .ico { font-size:21px; line-height:1.1; }
+    .tab.active { color:var(--green); background:var(--green-soft); }
+    .toast { position:fixed; z-index:10; left:50%; transform:translateX(-50%) translateY(20px); bottom:calc(92px + env(safe-area-inset-bottom)); background:#162d21; color:white; padding:12px 18px; border-radius:12px; font-size:13px; box-shadow:0 8px 22px #0003; opacity:0; pointer-events:none; transition:.2s; width:max-content; max-width:90vw; text-align:center; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    @media (prefers-reduced-motion:reduce) { *,*:before,*:after { transition:none !important; animation:none !important; } }
+
+    /* v0.2 · Personal, permisos y calendarios */
+    .segmented {display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:14px 0 12px;padding:2px 0}
+    .segmented button {flex:0 0 auto;background:white;border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:#586a5d;font-weight:750;font-size:12px}
+    .segmented button.on {background:var(--green);color:#fff;border-color:var(--green)}
+    .people-grid {display:grid;gap:10px}
+    .person-row {border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;display:flex;align-items:flex-start;gap:12px}
+    .person-icon {flex:0 0 42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);color:var(--green);font-size:14px;font-weight:900}
+    .person-info {min-width:0;flex:1}
+    .person-name {font-weight:800;overflow-wrap:anywhere}
+    .person-sub {font-size:11px;color:var(--muted);line-height:1.55;margin-top:3px}
+    .person-row.inactive {opacity:.58}
+    .person-controls {display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .person-controls button {font-size:11px;padding:8px 10px}
+    .mini-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:11px 0}
+    .mini-stat {padding:12px 8px;border:1px solid var(--line);border-radius:12px;background:white;text-align:center}
+    .mini-stat b {display:block;font-size:23px;color:var(--green)}
+    .mini-stat span {font-size:10px;color:var(--muted)}
+    .abs-card {border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:9px;background:#fff}
+    .abs-head {display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .abs-head strong {font-size:13px}
+    .abs-meta {font-size:11px;color:var(--muted);margin:7px 0}
+    .state {display:inline-block;padding:3px 7px;font-size:10px;font-weight:800;border-radius:20px}
+    .state.Autorizado {background:#e9f5ed;color:#227048}
+    .state.Solicitado {background:#fff3dd;color:#a56613}
+    .state.Denegado {background:#fce8e8;color:#ae3b3b}
+    .inline-buttons {display:flex;gap:7px;flex-wrap:wrap}
+    .inline-buttons button {font-size:11px}
+    .danger-btn {color:#ae3b3b;background:#fff1f1;border:0;border-radius:9px;padding:9px 10px;font-weight:750}
+    .thin-rule {height:1px;background:var(--line);margin:17px 0}
+    .summary-bar {display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 15px}
+    .summary-bar span {border-radius:100px;background:white;border:1px solid var(--line);padding:7px 9px;color:#536757;font-size:11px;font-weight:700}
+    .calendar-scroll {overflow:auto;border:1px solid var(--line);border-radius:13px;max-height:65vh;background:#fff;overscroll-behavior-x:contain}
+    .calendar-table {border-collapse:separate;border-spacing:0;min-width:max-content;font-size:10px}
+    .calendar-table th,.calendar-table td {height:37px;min-width:31px;padding:4px 2px;text-align:center;border-right:1px solid #eef1ef;border-bottom:1px solid #edf1ee}
+    .calendar-table thead th {background:#f2f7f3;position:sticky;top:0;z-index:2}
+    .calendar-table .sticky {position:sticky;left:0;z-index:1;background:#fff;min-width:115px;max-width:115px;text-align:left;padding:6px 8px;box-shadow:1px 0 2px #0001}
+    .calendar-table thead .sticky {z-index:3;background:#e9f2eb}
+    .calendar-table .sticky small {display:block;color:var(--muted);font-weight:500}
+    .cal-cell {font-size:10px;font-weight:800;cursor:pointer}
+    .cal-cell.weekend {background:#f9fbf9;color:#a4b3aa}
+    .cal-cell.shiftM {color:#246d44;background:#e9f6e8}
+    .cal-cell.shiftT {color:#91610c;background:#fff4d8}
+    .cal-cell.shiftN {color:#4b4f9b;background:#edf0ff}
+    .cal-cell.absVAC {background:#d7eeef;color:#146d77}
+    .cal-cell.absPER {background:#ffe7d1;color:#a35513}
+    .cal-cell.absOTHER {background:#f7e6ec;color:#9e3462}
+    .cal-cell.requested {outline:2px dotted #bc822b;outline-offset:-2px}
+    .cal-cell.manual {text-decoration:underline}
+    .legend {display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin:9px 0 14px}
+    .legend span {display:flex;align-items:center;gap:5px}
+    .swatch {width:13px;height:13px;border-radius:3px;border:1px solid #0001}
+    .swatch.m {background:#e9f6e8}.swatch.t {background:#fff4d8}.swatch.n {background:#edf0ff}.swatch.v {background:#d7eeef}.swatch.p {background:#ffe7d1}
+    .year-matrix {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .month-card {border:1px solid var(--line);border-radius:12px;background:white;padding:8px;min-width:0}
+    .month-card h4 {margin:2px 1px 7px;font-size:12px}
+    .month-days {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+    .month-days .day {border:0;padding:0;border-radius:3px;min-height:24px;font-size:9px;display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.1;min-width:0}
+    .month-days .day i {font-style:normal;font-size:8px;font-weight:900}
+    .month-days .head {font-size:9px;font-weight:700;text-align:center;color:var(--muted)}
+    .month-days .blank {min-height:24px}
+    .month-days .day.today {box-shadow:inset 0 0 0 2px #236344}
+    .section-actionbar {display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0;flex-wrap:wrap}
+    .section-actionbar strong {font-size:14px}
+    .date-actions {display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+    .date-actions input {padding:9px;border:1px solid #d8e3da;border-radius:9px;background:white;color:#1c3023;max-width:165px;font-size:12px}
+    .date-actions button {background:white;color:#277449;border:1px solid var(--line);border-radius:9px;padding:9px 10px}
+    .help {font-size:11px;color:var(--muted);line-height:1.55}
+    .compact {margin:0 0 8px}
+    .import-zone {border:1px dashed #aec7b7;border-radius:12px;padding:12px;margin:9px 0}
+    .import-zone input {width:100%;max-width:100%;font-size:12px}
+    .file-commands {display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
+    .file-commands button {font-size:12px;min-height:42px}
+    .badge-line {display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .empty-note {padding:20px;border:1px dashed #bbd1c0;border-radius:13px;color:var(--muted);font-size:12px;text-align:center}
+    .hidden {display:none!important}
+    @media (min-width:600px){.year-matrix{grid-template-columns:repeat(3,1fr)}.calendar-table .sticky{min-width:170px;max-width:170px}}
+    @media (max-width:375px){.month-days .day{font-size:8px;min-height:21px}.month-card{padding:6px}.month-days .day i{font-size:7px}.bottom-nav .tab{font-size:9px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div class="hero-top"><div class="brand"><div class="logo">A</div><div><div class="brand-name">ALUMALSA CONTROL</div><div class="eyebrow">Telegram mini app</div></div></div><span class="demo-pill">● DEMO 0.2</span></div>
+      <h1 id="heroTitle">Panel de producción</h1>
+      <p id="heroDesc">Registro y seguimiento de incidencias</p>
+    </header>
+    <main>
+      <section id="view-home">
+        <div class="kicker">Estado general · datos de prueba</div>
+        <div class="stats"><div class="stat danger"><b id="countPending">0</b><span>Pendientes</span></div><div class="stat orange"><b id="countWorking">0</b><span>En curso</span></div><div class="stat green"><b id="countClosed">0</b><span>Resueltas</span></div></div>
+        <div class="section-head"><h2>Accesos rápidos</h2></div>
+        <div class="actions"><button class="action" data-nav="new"><span class="ico">＋</span><span>Nueva incidencia</span></button><button class="action" data-nav="pending"><span class="ico">☷</span><span>Ver pendientes</span></button><button class="action" data-nav="history"><span class="ico">▤</span><span>Historial completo</span></button><button class="action" id="copySummary"><span class="ico">⤴</span><span>Copiar resumen</span></button></div>
+        <div class="section-head"><h2>Gestión de personal</h2></div><div class="actions"><button class="action" data-nav="personnel"><span class="ico">♙</span><span>Plantilla y permisos</span></button><button class="action" data-nav="calendar"><span class="ico">▦</span><span>Cuadrante de turnos</span></button></div><div class="section-head"><h2>Actividad reciente</h2><button class="linkbtn" data-nav="history">Ver todas</button></div>
+        <div id="recentList" class="record-list"></div>
+        <div class="note">🔒 Prueba sin servidor: solo almacena datos en este dispositivo. No envía avisos ni comparte información con otros usuarios.</div>
+      </section>
+      <section id="view-new" hidden>
+        <div class="view-title">Registrar incidencia</div>
+        <div class="panel"><h2>Nuevo registro</h2><p>Completa los datos básicos. La fecha y el identificador se crean automáticamente.</p>
+          <form id="newForm">
+            <div class="form-row"><label class="field"><span>Sección *</span><select name="area" required><option value="MEC">Mantenimiento mecánico</option><option value="ELEC">Mantenimiento eléctrico</option><option value="FUS">Fusión</option><option value="MACH">Machería</option><option value="TT">Tratamiento térmico</option><option value="LP">Líquidos penetrantes</option><option value="PROD">Producción</option><option value="CAL">Calidad</option></select></label><label class="field"><span>Prioridad *</span><select name="priority"><option value="media">Media</option><option value="alta">Alta</option><option value="baja">Baja</option></select></label></div>
+            <label class="field"><span>Equipo / instalación</span><input name="equipment" maxlength="80" placeholder="Ej. SW14, horno TF2…" /></label>
+            <label class="field"><span>Descripción *</span><textarea name="description" maxlength="1000" placeholder="Describe qué ocurre y qué se necesita…" required></textarea></label>
+            <div class="form-row"><label class="field"><span>Responsable</span><select name="assignee"><option>Sin asignar</option><option>Mantenimiento mecánico</option><option>Mantenimiento eléctrico</option><option>Producción</option><option>Tratamiento térmico</option><option>Calidad</option></select></label><label class="field"><span>Turno</span><select name="shift"><option>Mañana</option><option>Tarde</option><option>Noche</option><option>Sin turno</option></select></label></div>
+            <button class="primary" type="submit">✓ Guardar incidencia</button>
+          </form>
+        </div>
+      </section>
+      <section id="view-pending" hidden>
+        <div class="view-title">Incidencias abiertas</div><p class="hint">Puedes cambiar el estado de cada incidencia.</p>
+        <div class="filters"><input id="pendingSearch" class="filter wide" type="search" placeholder="Buscar por equipo, ID o texto…" aria-label="Buscar incidencias" /><select class="filter" id="pendingArea" aria-label="Filtrar por sección"><option value="">Todas las secciones</option><option value="MEC">Mecánica</option><option value="ELEC">Eléctrica</option><option value="FUS">Fusión</option><option value="MACH">Machería</option><option value="TT">Tratamiento térmico</option><option value="LP">Líquidos penetrantes</option><option value="PROD">Producción</option><option value="CAL">Calidad</option></select><select class="filter" id="pendingPriority" aria-label="Filtrar por prioridad"><option value="">Todas prioridades</option><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select></div>
+        <div id="pendingList" class="record-list"></div>
+      </section>
+      <section id="view-history" hidden>
+        <div class="view-title">Historial</div><p class="hint">Todos los registros y su estado actualizado.</p>
+        <div class="filters"><input id="historySearch" class="filter wide" type="search" placeholder="Buscar registros…" aria-label="Buscar historial" /><select id="historyStatus" class="filter wide" aria-label="Filtrar estado"><option value="">Todos los estados</option><option value="pendiente">Pendientes</option><option value="curso">En curso</option><option value="resuelta">Resueltas</option></select></div>
+        <div id="historyList" class="record-list"></div>
+        <div class="section-head"><h2>Herramientas de prueba</h2></div>
+        <button class="outlined" id="resetDemo" type="button">Restablecer los datos de ejemplo</button>
+      </section>
+
+      <section id="view-personnel" hidden>
+        <div class="view-title">Personal y permisos</div>
+        <p class="hint">Plantilla, vacaciones, permisos y ficha anual · datos de demostración.</p>
+        <div class="segmented" id="personalTabs">
+          <button class="on" data-pers-tab="staff">Plantilla</button>
+          <button data-pers-tab="absences">Permisos y vacaciones</button>
+          <button data-pers-tab="files">Copias e importación</button>
+        </div>
+        <div id="personal-staff">
+          <div id="staffListMode">
+            <div class="mini-stats"><div class="mini-stat"><b id="staffActiveCount">0</b><span>Activos</span></div><div class="mini-stat"><b id="staffAwayCount">0</b><span>Ausentes hoy*</span></div><div class="mini-stat"><b id="staffRequestedCount">0</b><span>Solicitudes abiertas</span></div></div>
+            <div class="section-actionbar"><strong>Trabajadores</strong><button class="outlined" id="newStaffBtn">+ Alta</button></div>
+            <input class="filter" id="staffSearch" type="search" placeholder="Buscar matrícula, nombre o equipo…" aria-label="Buscar trabajadores" />
+            <label class="field" style="margin-top:10px"><span>Equipo</span><select id="staffTeamFilter"><option value="">Todos los equipos</option><option>Verde</option><option>Azul</option><option>Gris</option><option>Morado</option><option>Naranja</option><option>Otro</option></select></label>
+            <div id="staffList" class="people-grid"></div>
+            <p class="help">* Ausentes hoy: permisos autorizados, no solicitudes pendientes. Los turnos previstos no equivalen a confirmación de presencia.</p>
+          </div>
+          <div id="staffEditor" hidden class="panel">
+            <h2 id="staffEditorTitle">Alta de trabajador</h2><p>Los datos se guardan solo en este dispositivo.</p>
+            <form id="staffForm">
+              <input type="hidden" name="editId" />
+              <div class="form-row"><label class="field"><span>Matrícula *</span><input name="employeeNo" required maxlength="20" placeholder="DEMO-101"></label><label class="field"><span>Equipo *</span><select name="team" required><option>Verde</option><option>Azul</option><option>Gris</option><option>Morado</option><option>Naranja</option><option>Otro</option></select></label></div>
+              <div class="form-row"><label class="field"><span>Nombre *</span><input name="firstName" required maxlength="60"></label><label class="field"><span>Apellidos *</span><input name="lastName" required maxlength="90"></label></div>
+              <label class="field"><span>Patrón de turnos</span><select name="pattern" id="staffPattern"><option value="MTN">M-T-N (semanal)</option><option value="TMN">T-M-N (semanal)</option><option value="NTM">N-T-M (semanal)</option><option value="MT">M-T (semanal)</option><option value="TM">T-M (semanal)</option><option value="FM">Fijo mañana</option><option value="FT">Fijo tarde</option><option value="FN">Fijo noche</option><option value="4T">4 turnos · manual</option><option value="MAN">Sin patrón · manual</option></select></label>
+              <label class="field"><span>Semana inicial del patrón (lunes)</span><input name="anchor" type="date" required></label>
+              <label class="field"><span>Situación</span><select name="active"><option value="true">Activo</option><option value="false">Inactivo</option></select></label>
+              <button class="primary" type="submit">Guardar trabajador</button>
+              <button class="outlined" style="width:100%;margin-top:9px" type="button" id="cancelStaffBtn">Cancelar</button>
+            </form>
+          </div>
+          <div id="staffDetail" hidden>
+            <div class="section-actionbar"><button class="outlined" id="backStaffBtn">← Plantilla</button><div class="date-actions"><button type="button" id="yearPrev">‹</button><b id="personYearText">2026</b><button type="button" id="yearNext">›</button></div></div>
+            <div class="panel"><h2 id="detailPersonName">Trabajador</h2><p id="detailPersonMeta"></p><div class="summary-bar" id="detailPersonStats"></div><div class="inline-buttons"><button class="outlined" type="button" id="detailNewAbs">+ Permiso</button><button class="outlined" type="button" id="detailEditStaff">Editar ficha</button></div></div>
+            <div class="section-head"><h2>Calendario anual</h2></div>
+            <div class="legend"><span><i class="swatch m"></i>Mañana</span><span><i class="swatch t"></i>Tarde</span><span><i class="swatch n"></i>Noche</span><span><i class="swatch v"></i>Vacaciones</span><span><i class="swatch p"></i>Permiso</span></div>
+            <p class="help">Pulsa un día para registrar vacaciones, permisos o una excepción de turno. La rotación semanal es una previsión, sin cálculo de descansos ni festivos.</p>
+            <div id="dayActionPanel" hidden class="panel"><h2 id="dayActionTitle">Acción del día</h2><p>Selecciona qué deseas registrar.</p><div class="inline-buttons"><button type="button" class="outlined" id="dayAddAbs">Vacaciones / permiso</button><button type="button" class="outlined" id="dayAddShift">Cambiar turno</button><button type="button" class="outlined" id="dayCancel">Cancelar</button></div></div><div id="yearGrid" class="year-matrix"></div>
+          </div>
+        </div>
+        <div id="personal-absences" hidden>
+          <div class="section-actionbar"><strong>Solicitudes y ausencias</strong><button id="newAbsBtn" class="outlined">+ Registrar</button></div>
+          <div class="filters"><select class="filter" id="absenceStatusFilter"><option value="">Todos los estados</option><option>Solicitado</option><option>Autorizado</option><option>Denegado</option></select><select class="filter" id="absenceKindFilter"><option value="">Todos los tipos</option><option value="VAC">Vacaciones</option><option value="PER">Permisos</option><option value="OTHER">Bajas / otros</option></select></div>
+          <div id="absenceList"></div>
+          <div id="absenceEditor" hidden class="panel">
+            <h2 id="absenceEditorTitle">Nuevo permiso</h2><p>Los códigos P10, P11, etc. se mantienen sin atribuirles significados que no hemos verificado.</p>
+            <form id="absenceForm">
+              <input type="hidden" name="editId" />
+              <label class="field"><span>Trabajador *</span><select name="personId" id="absencePerson" required></select></label>
+              <label class="field"><span>Tipo / código *</span><select name="code" id="absenceCode"><option value="VAC">VAC · Vacaciones</option><option value="P10">P10</option><option value="P11">P11</option><option value="P12">P12</option><option value="P40">P40</option><option value="P41">P41</option><option value="P31">P31</option><option value="P50">P50</option><option value="P60">P60</option><option value="P61">P61</option><option value="BAJA">BAJA · Baja / ausencia</option><option value="DESC">DESC · Descanso / fiesta</option><option value="OTRO">OTRO · Otro permiso</option></select></label>
+              <div class="form-row"><label class="field"><span>Desde *</span><input type="date" name="from" required /></label><label class="field"><span>Hasta *</span><input type="date" name="to" required /></label></div>
+              <label class="field"><span>Estado</span><select name="state"><option>Solicitado</option><option>Autorizado</option><option>Denegado</option></select></label>
+              <label class="field"><span>Notas</span><textarea name="notes" maxlength="400" placeholder="Solo información operativa, sin datos sensibles"></textarea></label>
+              <button class="primary" type="submit">Guardar permiso</button>
+              <button class="outlined" style="width:100%;margin-top:9px" type="button" id="cancelAbsBtn">Cancelar</button>
+            </form>
+          </div>
+        </div>
+        <div id="personal-files" hidden>
+          <div class="panel"><h2>Exportación y copias</h2><p>Descarga los datos a tu móvil antes de cambiar de dispositivo o borrar los datos de Telegram.</p>
+            <div class="file-commands"><button class="outlined" id="exportBackup">⬇ Copia completa JSON</button><button class="outlined" id="exportPeople">⬇ Plantilla CSV</button><button class="outlined" id="exportAbsences">⬇ Permisos CSV</button><button class="outlined" id="exportIncidents">⬇ Incidencias CSV</button></div>
+            <div class="import-zone"><strong>Restaurar copia JSON</strong><p class="help">Sustituye todos los registros locales. La copia debe proceder de esta app.</p><input id="restoreFile" type="file" accept=".json,application/json" /></div>
+            <div class="import-zone"><strong>Importar plantilla desde CSV</strong><p class="help">Cabeceras: matricula;nombre;apellidos;equipo;patron;ancla;activo. Acepta CSV UTF-8 separado por punto y coma o coma. No importa .xlsx directamente.</p><input id="importPeople" type="file" accept=".csv,text/csv"/><button type="button" class="outlined" style="margin-top:9px" id="templatePeople">Descargar plantilla CSV</button></div>
+            <div class="import-zone"><strong>Importar permisos desde CSV</strong><p class="help">Cabeceras: matricula;codigo;desde;hasta;estado;notas. Fechas AAAA-MM-DD. Las matrículas deben existir.</p><input id="importAbsences" type="file" accept=".csv,text/csv"/><button type="button" class="outlined" style="margin-top:9px" id="templateAbsences">Descargar plantilla CSV</button></div>
+          </div>
+          <div class="note">⚠️ GitHub Pages es público y esta versión no tiene autenticación. No introduzcas información real de empleados hasta contar con un backend corporativo y permisos autorizados. No incluyas CSV, copias ni datos personales en el repositorio.</div>
+        </div>
+      </section>
+      <section id="view-calendar" hidden>
+        <div class="view-title">Planificación del personal</div>
+        <p class="hint">Consulta diaria por turnos y matriz mensual, inspiradas en OrganPlan.</p>
+        <div class="segmented"><button class="on" data-cal-tab="daily">Disponibilidad diaria</button><button data-cal-tab="monthly">Cuadrante mensual</button></div>
+        <div id="calendar-daily">
+          <div class="section-actionbar"><strong>Fecha y turno</strong><div class="date-actions"><input id="dailyDate" type="date" /><select class="filter" style="max-width:112px;min-height:39px;padding:7px" id="dailyShift"><option value="">Todos</option><option value="M">Mañana</option><option value="T">Tarde</option><option value="N">Noche</option><option value="4T">4T / manual</option></select></div></div>
+          <div id="dailyStats" class="summary-bar"></div><div id="dailyPeople" class="people-grid"></div>
+        </div>
+        <div id="calendar-monthly" hidden>
+          <div class="section-actionbar"><strong>Calendario mensual</strong><div class="date-actions"><button id="monthPrev" type="button">‹</button><input type="month" id="calendarMonth"/><button id="monthNext" type="button">›</button></div></div>
+          <div class="legend"><span><i class="swatch m"></i>M</span><span><i class="swatch t"></i>T</span><span><i class="swatch n"></i>N</span><span><i class="swatch v"></i>Vacaciones</span><span><i class="swatch p"></i>Permisos</span></div>
+          <p class="help">Desliza la tabla horizontalmente. Pulsa una celda para registrar un permiso o una excepción de turno.</p>
+          <div class="calendar-scroll"><table class="calendar-table" id="monthlyMatrix"></table></div>
+          <div id="monthSummary" class="summary-bar"></div>
+        </div>
+        <div class="panel" id="shiftExceptionPanel" hidden>
+          <h2>Excepción de turno</h2><p id="shiftExceptionLabel">Turno individual</p>
+          <form id="shiftExceptionForm"><input type="hidden" name="personId"/><input type="hidden" name="date"/>
+            <label class="field"><span>Turno / situación del día</span><select name="code"><option value="">Eliminar excepción · usar patrón</option><option>M</option><option>T</option><option>N</option><option value="D">D · Descanso</option><option value="F">F · Fiesta</option></select></label>
+            <button class="primary" type="submit">Guardar excepción</button><button class="outlined" type="button" id="cancelShiftException" style="width:100%;margin-top:9px">Cancelar</button></form>
+        </div>
+      </section>
+    </main>
+  </div>
+  <nav class="bottom-nav" aria-label="Navegación principal"><button class="tab active" data-nav="home" aria-current="page"><span class="ico">⌂</span>Inicio</button><button class="tab" data-nav="new"><span class="ico">⊕</span>Nuevo</button><button class="tab" data-nav="pending"><span class="ico">☷</span>Pendientes</button><button class="tab" data-nav="personnel"><span class="ico">♙</span>Personal</button><button class="tab" data-nav="calendar"><span class="ico">▦</span>Calendario</button></nav>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    'use strict';
+    const STORAGE_KEY = 'alumalsa_miniapp_demo_v1';
+    const CATEGORIES = {MEC:'Mecánica',ELEC:'Eléctrica',FUS:'Fusión',MACH:'Machería',TT:'Tratamiento térmico',LP:'Líquidos penetrantes',PROD:'Producción',CAL:'Calidad'};
+    const $ = (id) => document.getElementById(id);
+    let currentView = 'home';
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) { try { tg.ready(); tg.expand(); } catch (_e) {} }
+    function starterRecords() {
+      const now = Date.now();
+      return [
+        {id:'MEC-0001',area:'MEC',equipment:'SW14',description:'Pérdida de aceite. Revisar equipo.',priority:'alta',assignee:'Mantenimiento mecánico',shift:'Tarde',status:'pendiente',created:now-3600000,demo:true},
+        {id:'TT-0001',area:'TT',equipment:'Horno TF2',description:'Comprobar registro del ciclo térmico.',priority:'media',assignee:'Tratamiento térmico',shift:'Mañana',status:'curso',created:now-7200000,demo:true},
+        {id:'FUS-0001',area:'FUS',equipment:'Horno Striko',description:'Comprobación visual completada.',priority:'baja',assignee:'Producción',shift:'Noche',status:'resuelta',created:now-86400000,demo:true}
+      ];
+    }
+    function load() {
+      try { const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || localStorage.getItem('alumalsa_demo_v1')); if (Array.isArray(data)) return data.filter(x=>x&&x.id&&x.area&&x.status); } catch (_e) {}
+      return starterRecords();
+    }
+    let records = load();
+    function save() { try { localStorage.setItem(STORAGE_KEY,JSON.stringify(records)); return true; } catch (_e) { notify('⚠️ No se ha podido guardar en el dispositivo'); return false; } }
+    if (!localStorage.getItem(STORAGE_KEY)) save();
+    function escapeHTML(str) { return String(str == null ? '' : str).replace(/[&<>"']/g, x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x])); }
+    function dateText(ts) { try { return new Date(ts).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch (_e) { return ''; } }
+    function priorityText(p) { return {alta:'ALTA',media:'MEDIA',baja:'BAJA'}[p] || 'MEDIA'; }
+    function statusText(s) { return {pendiente:'● Pendiente',curso:'● En curso',resuelta:'✓ Resuelta'}[s] || s; }
+    let toastTimer = null;
+    function notify(msg) { const el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2700); }
+    function sorted(rows) { return [...rows].sort((a,b)=>b.created-a.created); }
+    function itemCard(r) {
+      const primary = r.status==='pendiente' ? `<button type="button" class="small-btn" data-status="curso" data-id="${escapeHTML(r.id)}">Iniciar</button>` : r.status==='curso' ? `<button type="button" class="small-btn" data-status="resuelta" data-id="${escapeHTML(r.id)}">Resolver</button>` : '';
+      const reopen = r.status==='resuelta' ? `<button type="button" class="small-btn secondary" data-status="pendiente" data-id="${escapeHTML(r.id)}">Reabrir</button>` : '';
+      return `<article class="record"><div class="record-top"><span class="record-id">${escapeHTML(r.id)}${r.demo?' <span style="font-size:10px;color:#789080;font-weight:600">(ejemplo)</span>':''}</span><span class="chip ${r.priority==='alta'?'high':r.priority==='baja'?'low':'medium'}">${priorityText(r.priority)}</span></div><div class="record-desc">${escapeHTML(r.description)}</div><div class="record-meta"><span>◈ ${escapeHTML(CATEGORIES[r.area]||r.area)}</span><span>· ${escapeHTML(r.equipment||'Sin equipo')}</span><span>· ${escapeHTML(dateText(r.created))}</span></div><div class="record-meta" style="margin-top:5px"><span>Responsable: ${escapeHTML(r.assignee||'Sin asignar')}</span><span>· ${escapeHTML(r.shift||'—')}</span></div><div class="record-footer"><span class="status ${r.status==='pendiente'?'pending':r.status==='curso'?'working':'closed'}">${statusText(r.status)}</span><div class="record-btns">${primary}${reopen}<button class="small-btn secondary" type="button" data-copy="${escapeHTML(r.id)}">Copiar</button></div></div></article>`;
+    }
+    function list(el,rows,empty) { el.innerHTML=rows.length?sorted(rows).map(itemCard).join(''):`<div class="empty"><strong>Sin resultados</strong><span>${escapeHTML(empty)}</span></div>`; }
+    function matches(r,q) { const text=[r.id,r.area,CATEGORIES[r.area],r.equipment,r.description,r.assignee].join(' ').toLowerCase(); return text.includes(q.trim().toLowerCase()); }
+    function redraw() {
+      $('countPending').textContent = records.filter(r=>r.status==='pendiente').length;
+      $('countWorking').textContent = records.filter(r=>r.status==='curso').length;
+      $('countClosed').textContent = records.filter(r=>r.status==='resuelta').length;
+      list($('recentList'),sorted(records).slice(0,3),'Crea tu primera incidencia desde Nueva.');
+      list($('pendingList'),records.filter(r=>r.status!=='resuelta').filter(r=>matches(r,$('pendingSearch').value)).filter(r=>!$('pendingArea').value||r.area===$('pendingArea').value).filter(r=>!$('pendingPriority').value||r.priority===$('pendingPriority').value),'No hay incidencias abiertas para esos filtros.');
+      list($('historyList'),records.filter(r=>matches(r,$('historySearch').value)).filter(r=>!$('historyStatus').value||r.status===$('historyStatus').value),'No hay incidencias para esos filtros.');
+    }
+    function goto(view) {
+      if (!['home','new','pending','history','personnel','calendar'].includes(view)) return;
+      currentView=view;
+      for (const id of ['home','new','pending','history','personnel','calendar']) $('view-'+id).hidden=id!==view;
+      document.querySelectorAll('.tab').forEach(t=>{ const active=t.dataset.nav===view; t.classList.toggle('active',active); active?t.setAttribute('aria-current','page'):t.removeAttribute('aria-current'); });
+      const headings={home:['Panel de producción','Registro y seguimiento de incidencias'],new:['Nueva incidencia','Registra un aviso en unos segundos'],pending:['Pendientes','Control de incidencias abiertas'],history:['Historial','Consulta y seguimiento de registros'],personnel:['Gestión de personal','Plantilla, vacaciones y permisos'],calendar:['Planificación','Turnos y disponibilidad']};
+      $('heroTitle').textContent=headings[view][0]; $('heroDesc').textContent=headings[view][1];
+      redraw(); if(typeof renderPersonnel==='function') renderPersonnel(); window.scrollTo({top:0,behavior:'instant'});
+    }
+    function createNextId(area) { const max=records.filter(r=>r.area===area).reduce((m,r)=>Math.max(m,Number(String(r.id).split('-').pop())||0),0); return `${area}-${String(max+1).padStart(4,'0')}`; }
+    function formatRecord(r) { return `${r.id} · ${CATEGORIES[r.area]||r.area}\nEquipo: ${r.equipment||'—'}\nPrioridad: ${priorityText(r.priority)}\nDescripción: ${r.description}\nResponsable: ${r.assignee}\nTurno: ${r.shift}\nEstado: ${statusText(r.status)}\nFecha: ${dateText(r.created)}`; }
+    async function copyText(text) { try { await navigator.clipboard.writeText(text); notify('✓ Texto copiado al portapapeles'); } catch (_e) { const area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.focus(); area.select(); try { document.execCommand('copy')?notify('✓ Texto copiado'):notify('No se pudo copiar el texto'); } catch (_er) { notify('No se pudo copiar el texto'); } area.remove(); } }
+    document.addEventListener('click',e=>{
+      const nav=e.target.closest('[data-nav]'); if (nav) { goto(nav.dataset.nav); return; }
+      const status=e.target.closest('[data-status]'); if (status) { const r=records.find(x=>x.id===status.dataset.id); if (!r) return; r.status=status.dataset.status; r.updated=Date.now(); save(); redraw(); notify(`${r.id}: ${statusText(r.status)}`); return; }
+      const copy=e.target.closest('[data-copy]'); if (copy) { const r=records.find(x=>x.id===copy.dataset.copy); if (r) copyText(formatRecord(r)); }
+    });
+    $('newForm').addEventListener('submit',e=>{
+      e.preventDefault(); const data=new FormData(e.target); const desc=String(data.get('description')||'').trim();
+      if (!desc) { notify('Describe la incidencia'); return; }
+      const area=String(data.get('area'));
+      const newRecord={id:createNextId(area),area,equipment:String(data.get('equipment')||'').trim(),description:desc,priority:String(data.get('priority')),assignee:String(data.get('assignee')),shift:String(data.get('shift')),status:'pendiente',created:Date.now(),demo:false};
+      records.push(newRecord); save(); e.target.reset(); goto('pending'); notify(`✓ ${newRecord.id} registrada`);
+    });
+    for(const id of ['pendingSearch','pendingArea','pendingPriority','historySearch','historyStatus']) $(id).addEventListener('input',redraw);
+    $('resetDemo').addEventListener('click',()=>{ if (!confirm('Se borrarán los registros que hayas añadido en este dispositivo. ¿Restablecer los datos de ejemplo?')) return; records=starterRecords();save();goto('home');notify('Datos de prueba restablecidos'); });
+    $('copySummary').addEventListener('click',()=>{
+      const pending=records.filter(r=>r.status!=='resuelta');
+      const summary=`ALUMALSA CONTROL · Resumen de prueba\nPendientes: ${records.filter(r=>r.status==='pendiente').length}\nEn curso: ${records.filter(r=>r.status==='curso').length}\nResueltas: ${records.filter(r=>r.status==='resuelta').length}\n\n${sorted(pending).map(formatRecord).join('\n\n')||'Sin incidencias abiertas'}`;
+      copyText(summary);
+    });
+
+    // ===============================================
+    // ALUMALSA CONTROL 0.2 · PERSONAL / PERMISOS
+    // ===============================================
+    const STAFF_KEY = 'alumalsa_personal_v02';
+    const ABS_KEY = 'alumalsa_ausencias_v02';
+    const SHIFTS_KEY = 'alumalsa_excepciones_v02';
+    const PATTERNS = {
+      MTN:['M','T','N'], TMN:['T','M','N'], NTM:['N','T','M'],
+      MT:['M','T'], TM:['T','M'], FM:['M'], FT:['T'], FN:['N'],
+      '4T':[], MAN:[]
+    };
+    const ABS_CODES = ['VAC','P10','P11','P12','P40','P41','P31','P50','P60','P61','BAJA','DESC','OTRO'];
+    const COLORS = ['#e9f6e8','#fff4d8','#edf0ff'];
+    const DAYS = ['L','M','X','J','V','S','D'];
+    const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const today = localISO(new Date());
+    function localISO(date) { return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-'); }
+    function fromISO(iso) { const a=iso.split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12); }
+    function addDays(iso,num) { const d=fromISO(iso);d.setDate(d.getDate()+num);return localISO(d); }
+    function monday(iso) { const date=fromISO(iso); const dow=(date.getDay()+6)%7;date.setDate(date.getDate()-dow);return localISO(date); }
+    function validISO(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s) && localISO(fromISO(s))===s; }
+    function uid() { return 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,10); }
+    function readArray(key,defaults) { try { const d=JSON.parse(localStorage.getItem(key));if(Array.isArray(d))return d; }catch(_e){} return defaults; }
+    function sampleStaff() { const anchor=monday(today);return [
+      {id:'demo-staff-1',employeeNo:'DEMO-101',firstName:'Operario',lastName:'Ejemplo A',team:'Verde',pattern:'MTN',anchor,active:true},
+      {id:'demo-staff-2',employeeNo:'DEMO-102',firstName:'Operaria',lastName:'Ejemplo B',team:'Azul',pattern:'TMN',anchor,active:true},
+      {id:'demo-staff-3',employeeNo:'DEMO-103',firstName:'Operario',lastName:'Ejemplo C',team:'Gris',pattern:'FN',anchor,active:true},
+      {id:'demo-staff-4',employeeNo:'DEMO-104',firstName:'Operaria',lastName:'Ejemplo D',team:'Morado',pattern:'MT',anchor,active:true}
+    ];}
+    let staff=readArray(STAFF_KEY,sampleStaff());
+    let absences=readArray(ABS_KEY,[]);
+    let shiftOverrides=readArray(SHIFTS_KEY,[]);
+    let personalTab='staff', calendarTab='daily', currentPersonId=null, currentYear=Number(today.slice(0,4)), selectedDayAction=null;
+    function savePeople() {
+      try { localStorage.setItem(STAFF_KEY,JSON.stringify(staff));localStorage.setItem(ABS_KEY,JSON.stringify(absences));localStorage.setItem(SHIFTS_KEY,JSON.stringify(shiftOverrides));return true; }
+      catch(_e) {notify('Sin espacio para almacenar datos. Exporta una copia.'); return false;}
+    }
+    if(!localStorage.getItem(STAFF_KEY)) savePeople();
+    function fullName(p){return (p.lastName+' '+p.firstName).trim();}
+    function personById(id){return staff.find(p=>p.id===id);}
+    function kind(code){return code==='VAC'?'VAC':code.startsWith('P')?'PER':'OTHER';}
+    function absentOn(id,date){
+      const valid=absences.filter(x=>x.personId===id&&x.from<=date&&x.to>=date&&x.state!=='Denegado');
+      return valid.find(x=>x.state==='Autorizado')||valid[0]||null;
+    }
+    function plannedShift(person,date) {
+      if(!person)return '';
+      const override=shiftOverrides.find(x=>x.personId===person.id&&x.date===date);
+      if(override) return override.code;
+      const seq=PATTERNS[person.pattern]||[];
+      if(!seq.length)return person.pattern==='4T'?'4T':'';
+      const dayIndex=s=>{const [y,m,d]=s.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/86400000);};
+      const weeks=Math.floor((dayIndex(monday(date))-dayIndex(monday(person.anchor||today)))/7);
+      return seq[((weeks%seq.length)+seq.length)%seq.length];
+    }
+    function dayStatus(person,date){
+      const abs=absentOn(person.id,date);
+      if(abs) return {label:abs.code,css:'abs'+kind(abs.code)+(abs.state==='Solicitado'?' requested':''),status:abs.state,abs};
+      const code=plannedShift(person,date);
+      return {label:code||'—',css:code==='M'?'shiftM':code==='T'?'shiftT':code==='N'?'shiftN':'',status:'previsto',abs:null};
+    }
+    function cellContent(person,date){const v=dayStatus(person,date);return `<td data-day="${date}" data-person="${escapeHTML(person.id)}" class="cal-cell ${v.css} ${shiftOverrides.some(x=>x.personId===person.id&&x.date===date)?'manual':''}" title="${escapeHTML(fullName(person))} · ${date} · ${escapeHTML(v.label)} ${escapeHTML(v.status)}">${escapeHTML(v.label)}</td>`;}
+    function activatePersonal(tab) {
+      personalTab=tab;
+      for(const id of ['staff','absences','files']) $('personal-'+id).hidden=id!==tab;
+      document.querySelectorAll('[data-pers-tab]').forEach(b=>b.classList.toggle('on',b.dataset.persTab===tab));
+      renderPersonnel();
+    }
+    function renderPersonnel(){
+      if(currentView!=='personnel' && currentView!=='calendar' && currentView!=='home')return;
+      const active=staff.filter(p=>p.active);
+      $('staffActiveCount').textContent=active.length;
+      $('staffAwayCount').textContent=active.filter(p=>{const a=absentOn(p.id,today);return a?.state==='Autorizado';}).length;
+      $('staffRequestedCount').textContent=absences.filter(x=>x.state==='Solicitado').length;
+      const q=$('staffSearch').value.trim().toLowerCase(), team=$('staffTeamFilter').value;
+      const shown=staff.filter(p=>[p.employeeNo,fullName(p),p.team].join(' ').toLowerCase().includes(q)&&(!team||p.team===team)).sort((a,b)=>Number(b.active)-Number(a.active)||fullName(a).localeCompare(fullName(b),'es'));
+      $('staffList').innerHTML=shown.length?shown.map(p=>`<article class="person-row ${p.active?'':'inactive'}"><div class="person-icon">${escapeHTML(p.firstName.slice(0,1)+p.lastName.slice(0,1))}</div><div class="person-info"><div class="person-name">${escapeHTML(fullName(p))}</div><div class="person-sub">${escapeHTML(p.employeeNo)} · Equipo ${escapeHTML(p.team)} · ${escapeHTML(p.pattern)} · ${p.active?'Activo':'Inactivo'}</div><div class="person-controls"><button class="small-btn" data-person-detail="${escapeHTML(p.id)}">Ficha anual</button><button class="small-btn secondary" data-person-edit="${escapeHTML(p.id)}">Editar</button><button class="small-btn secondary" data-person-abs="${escapeHTML(p.id)}">+ Permiso</button></div></div></article>`).join(''):'<div class="empty-note">Sin trabajadores para esta búsqueda.</div>';
+      const status=$('absenceStatusFilter').value, category=$('absenceKindFilter').value;
+      const rows=[...absences].filter(a=>(!status||a.state===status)&&(!category||kind(a.code)===category)).sort((a,b)=>b.from.localeCompare(a.from));
+      $('absenceList').innerHTML=rows.length?rows.map(a=>{const p=personById(a.personId);return `<article class="abs-card"><div class="abs-head"><strong>${escapeHTML(p?fullName(p):a.personId)} · ${escapeHTML(a.code)}</strong><span class="state ${escapeHTML(a.state)}">${escapeHTML(a.state)}</span></div><div class="abs-meta">${escapeHTML(a.from)} → ${escapeHTML(a.to)} · ${escapeHTML(p?.employeeNo||'Sin matrícula')}</div>${a.notes?`<div class="help">${escapeHTML(a.notes)}</div>`:''}<div class="inline-buttons" style="margin-top:10px"><button class="small-btn" data-abs-edit="${escapeHTML(a.id)}">Editar</button>${a.state==='Solicitado'?`<button class="small-btn" data-abs-approve="${escapeHTML(a.id)}">Autorizar</button>`:''}<button class="danger-btn" data-abs-remove="${escapeHTML(a.id)}">Eliminar</button></div></article>`;}).join(''):'<div class="empty-note">No hay permisos en este filtro.</div>';
+      fillPersonSelect();
+      if(currentPersonId&& !$('staffDetail').hidden) renderYear();
+      if(currentView==='calendar') renderCalendar();
+    }
+    function fillPersonSelect(){
+      const sel=$('absencePerson'), current=sel.value;
+      const options=staff.filter(x=>x.active || absences.some(a=>a.personId===x.id)).sort((a,b)=>fullName(a).localeCompare(fullName(b),'es'));
+      sel.innerHTML='<option value="">Selecciona un trabajador</option>'+options.map(p=>`<option value="${escapeHTML(p.id)}">${escapeHTML(p.employeeNo+' · '+fullName(p))}</option>`).join('');
+      if(options.some(p=>p.id===current))sel.value=current;
+    }
+    function newPerson(){
+      currentPersonId=null;
+      $('staffListMode').hidden=true;$('staffDetail').hidden=true;$('staffEditor').hidden=false;
+      $('staffEditorTitle').textContent='Alta de trabajador';$('staffForm').reset();
+      $('staffForm').elements.editId.value='';$('staffForm').elements.anchor.value=monday(today);
+    }
+    function editPerson(id){
+      const p=personById(id);if(!p)return;
+      activatePersonal('staff');$('staffListMode').hidden=true;$('staffDetail').hidden=true;$('staffEditor').hidden=false;
+      $('staffEditorTitle').textContent='Editar trabajador';
+      const f=$('staffForm'); for(const key of ['employeeNo','firstName','lastName','team','pattern','anchor'])f.elements[key].value=p[key]||'';
+      f.elements.editId.value=p.id;f.elements.active.value=String(p.active);
+      window.scrollTo(0,0);
+    }
+    function closePersonPanels(){currentPersonId=null;$('staffEditor').hidden=true;$('staffDetail').hidden=true;$('staffListMode').hidden=false;renderPersonnel();}
+    function personDetails(id){
+      const p=personById(id);if(!p)return;currentPersonId=id;currentYear=Number(today.slice(0,4));
+      activatePersonal('staff');$('staffListMode').hidden=true;$('staffEditor').hidden=true;$('staffDetail').hidden=false;renderYear();window.scrollTo(0,0);
+    }
+    function rangeApproved(person,year){return absences.filter(x=>x.personId===person.id&&x.state==='Autorizado'&&x.from<=year+'-12-31'&&x.to>=year+'-01-01');}
+    function renderYear(){
+      const p=personById(currentPersonId);if(!p)return;
+      $('personYearText').textContent=currentYear;
+      $('detailPersonName').textContent=fullName(p);
+      $('detailPersonMeta').textContent=p.employeeNo+' · Equipo '+p.team+' · Patrón '+p.pattern+' · '+(p.active?'Activo':'Inactivo');
+      const year=String(currentYear), approved=rangeApproved(p,year), vacations=approved.filter(x=>x.code==='VAC');
+      const dayCount=approved.reduce((sum,a)=>sum+1+Math.round((fromISO(a.to<year+'-12-31'?a.to:year+'-12-31')-fromISO(a.from>year+'-01-01'?a.from:year+'-01-01'))/86400000),0);
+      $('detailPersonStats').innerHTML=`<span>${approved.length} ausencias autorizadas</span><span>${vacations.length} periodos de vacaciones</span><span>${dayCount} días naturales con ausencia</span>`;
+      let out='';
+      for(let month=0;month<12;month++){
+        const first=new Date(currentYear,month,1,12), n=new Date(currentYear,month+1,0,12).getDate(),offset=(first.getDay()+6)%7;
+        let days=DAYS.map(x=>`<span class="head">${x}</span>`).join('')+'<span class="blank"></span>'.repeat(offset);
+        for(let day=1;day<=n;day++){
+          const date=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+          const result=dayStatus(p,date), label=result.label==='—'?'':result.label;
+          days+=`<button class="day ${result.css} ${date===today?'today':''}" data-date-action="${date}" data-person="${escapeHTML(p.id)}" title="${date} · ${escapeHTML(label)}" type="button"><span>${day}</span><i>${escapeHTML(label)}</i></button>`;
+        }
+        out+=`<div class="month-card"><h4>${MONTHS[month]}</h4><div class="month-days">${days}</div></div>`;
+      }
+      $('yearGrid').innerHTML=out;
+    }
+    $('staffForm').addEventListener('submit',e=>{
+      e.preventDefault();const f=e.target, d=new FormData(f),editId=String(d.get('editId')||''), no=String(d.get('employeeNo')||'').trim(),anchor=String(d.get('anchor')||'');
+      if(!no || !validISO(anchor)){notify('Revisa matrícula y semana inicial');return;}
+      if(staff.some(x=>x.employeeNo.toLowerCase()===no.toLowerCase()&&x.id!==editId)){notify('Matrícula duplicada');return;}
+      const p={id:editId||uid(),employeeNo:no,firstName:String(d.get('firstName')||'').trim(),lastName:String(d.get('lastName')||'').trim(),team:String(d.get('team')),pattern:String(d.get('pattern')),anchor:monday(anchor),active:d.get('active')==='true'};
+      if(!p.firstName||!p.lastName){notify('Nombre y apellidos obligatorios');return;}
+      if(editId)staff[staff.findIndex(x=>x.id===editId)]=p;else staff.push(p);
+      savePeople();closePersonPanels();notify('✓ Trabajador guardado');
+    });
+    function openAbsence(id=null,personId=null,date=null){
+      activatePersonal('absences');$('absenceEditor').hidden=false;
+      fillPersonSelect();let f=$('absenceForm');f.reset();f.elements.editId.value='';
+      f.elements.from.value=date||today;f.elements.to.value=date||today;
+      $('absenceEditorTitle').textContent='Nuevo permiso o vacaciones';
+      if(personId)f.elements.personId.value=personId;
+      if(id){const a=absences.find(x=>x.id===id);if(!a)return;
+        for(const key of ['personId','code','from','to','state','notes'])f.elements[key].value=a[key]||'';
+        f.elements.editId.value=a.id;$('absenceEditorTitle').textContent='Editar permiso / vacaciones';}
+      $('absenceEditor').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function closeAbsence(){$('absenceEditor').hidden=true;}
+    function overlaps(a,b){return a.from<=b.to&&b.from<=a.to;}
+    $('absenceForm').addEventListener('submit',e=>{
+      e.preventDefault();const d=new FormData(e.target),editId=String(d.get('editId')||'');
+      const a={id:editId||uid(),personId:String(d.get('personId')||''),code:String(d.get('code')||''),from:String(d.get('from')||''),to:String(d.get('to')||''),state:String(d.get('state')||''),notes:String(d.get('notes')||'').trim()};
+      if(!personById(a.personId)|| !ABS_CODES.includes(a.code)||!validISO(a.from)||!validISO(a.to)||a.to<a.from){notify('Revisa trabajador, código y fechas');return;}
+      if(absences.some(x=>x.id!==a.id&&x.personId===a.personId&&x.state!=='Denegado'&&a.state!=='Denegado'&&overlaps(x,a))){notify('Ya hay un permiso solapado en esas fechas');return;}
+      if(editId){const idx=absences.findIndex(x=>x.id===editId);if(idx<0)return;absences[idx]=a;}else absences.push(a);
+      savePeople();closeAbsence();renderPersonnel();notify('✓ Permiso guardado');
+    });
+    function changeAbs(id,action){
+      const a=absences.find(x=>x.id===id);if(!a)return;
+      if(action==='remove'){if(!confirm('¿Eliminar este permiso?'))return;absences=absences.filter(x=>x.id!==id);}
+      if(action==='approve'){if(absences.some(x=>x.id!==id&&x.personId===a.personId&&x.state!=='Denegado'&&overlaps(x,a))){notify('Permiso solapado. Revisa fechas');return;}a.state='Autorizado';}
+      savePeople();renderPersonnel();notify('✓ Cambio guardado');
+    }
+    function activateCalendar(tab){calendarTab=tab;for(const id of ['daily','monthly'])$('calendar-'+id).hidden=id!==tab;document.querySelectorAll('[data-cal-tab]').forEach(b=>b.classList.toggle('on',b.dataset.calTab===tab));renderCalendar();}
+    function renderCalendar(){
+      if(calendarTab==='daily')renderDaily();else renderMonthly();
+    }
+    function renderDaily(){
+      const date=$('dailyDate').value||today,shift=$('dailyShift').value;
+      const active=staff.filter(x=>x.active).sort((a,b)=>fullName(a).localeCompare(fullName(b),'es'));
+      const all=active.map(p=>({p,v:dayStatus(p,date),planned:plannedShift(p,date)}));
+      const absence=all.filter(x=>x.v.abs?.state==='Autorizado').length;
+      const requested=all.filter(x=>x.v.abs?.state==='Solicitado').length;
+      const working=all.filter(x=>x.v.abs?.state!=='Autorizado'&&x.v.planned!== 'D'&&x.v.planned!=='F');
+      const available=all.filter(x=>!x.v.abs||x.v.abs.state!=='Autorizado');
+      const rows=all.filter(x=>!shift||x.planned===shift);
+      $('dailyStats').innerHTML=`<span>${active.length} activos</span><span>${absence} ausentes autorizados</span><span>${requested} solicitudes pendientes</span><span>${available.length} sin ausencia autorizada</span>`;
+      $('dailyPeople').innerHTML=rows.length?rows.map(({p,v,planned})=>`<article class="person-row"><div class="person-icon">${escapeHTML(planned||'?')}</div><div class="person-info"><div class="person-name">${escapeHTML(fullName(p))}</div><div class="person-sub">${escapeHTML(p.employeeNo)} · ${escapeHTML(p.team)} · Turno previsto: ${escapeHTML(planned||'Manual')}</div><div class="badge-line" style="margin-top:7px"><span class="state ${v.abs?escapeHTML(v.abs.state):'Autorizado'}">${v.abs?escapeHTML(v.label+' · '+v.abs.state):'Sin ausencia registrada'}</span></div><div class="person-controls"><button class="small-btn" data-person-detail="${escapeHTML(p.id)}">Ficha</button><button class="small-btn secondary" data-person-abs="${escapeHTML(p.id)}" data-start="${date}">+ Permiso</button><button class="small-btn secondary" data-exception="${escapeHTML(p.id)}" data-start="${date}">Cambiar turno</button></div></div></article>`).join(''):'<div class="empty-note">Ningún empleado en este turno / fecha.</div>';
+    }
+    function renderMonthly(){
+      const m=$('calendarMonth').value||today.slice(0,7), year=Number(m.slice(0,4)), month=Number(m.slice(5,7)),days=new Date(year,month,0,12).getDate();
+      let head='<thead><tr><th class="sticky">Operario</th>',rows='<tbody>';
+      for(let n=1;n<=days;n++){const iso=m+'-'+String(n).padStart(2,'0'),dow=(fromISO(iso).getDay()+6)%7;head+=`<th>${n}<br><small>${DAYS[dow]}</small></th>`;}
+      head+='</tr></thead>';
+      for(const p of staff.filter(x=>x.active).sort((a,b)=>fullName(a).localeCompare(fullName(b),'es'))){
+        rows+=`<tr><th class="sticky">${escapeHTML(fullName(p))}<small>${escapeHTML(p.employeeNo)}</small></th>`;
+        for(let n=1;n<=days;n++){const iso=m+'-'+String(n).padStart(2,'0');rows+=cellContent(p,iso);}
+        rows+='</tr>';
+      }
+      $('monthlyMatrix').innerHTML=head+rows+'</tbody>';
+      $('monthSummary').innerHTML=`<span>${staff.filter(x=>x.active).length} trabajadores activos</span><span>${days} días</span><span>${MONTHS[month-1]} ${year}</span>`;
+    }
+    function openException(personId,date){
+      const p=personById(personId);if(!p)return;
+      goto('calendar');$('shiftExceptionPanel').hidden=false;
+      const form=$('shiftExceptionForm');form.elements.personId.value=personId;form.elements.date.value=date;
+      const existing=shiftOverrides.find(x=>x.personId===personId&&x.date===date);
+      form.elements.code.value=existing?.code||'';
+      $('shiftExceptionLabel').textContent=fullName(p)+' · '+date+' · patrón '+p.pattern;
+      $('shiftExceptionPanel').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    $('shiftExceptionForm').addEventListener('submit',e=>{
+      e.preventDefault();const f=e.target,id=f.elements.personId.value,date=f.elements.date.value,code=f.elements.code.value;
+      shiftOverrides=shiftOverrides.filter(x=>!(x.personId===id&&x.date===date));
+      if(code)shiftOverrides.push({personId:id,date,code});
+      savePeople();$('shiftExceptionPanel').hidden=true;renderCalendar();notify('✓ Turno actualizado');
+    });
+    // Interaction handlers
+    document.addEventListener('click',e=>{
+      const tab=e.target.closest('[data-pers-tab]');if(tab){activatePersonal(tab.dataset.persTab);return;}
+      const ctab=e.target.closest('[data-cal-tab]');if(ctab){activateCalendar(ctab.dataset.calTab);return;}
+      const detail=e.target.closest('[data-person-detail]');if(detail){goto('personnel');personDetails(detail.dataset.personDetail);return;}
+      const edit=e.target.closest('[data-person-edit]');if(edit){goto('personnel');editPerson(edit.dataset.personEdit);return;}
+      const pAbs=e.target.closest('[data-person-abs]');if(pAbs){goto('personnel');openAbsence(null,pAbs.dataset.personAbs,pAbs.dataset.start||null);return;}
+      const eAbs=e.target.closest('[data-abs-edit]');if(eAbs){openAbsence(eAbs.dataset.absEdit);return;}
+      const del=e.target.closest('[data-abs-remove]');if(del){changeAbs(del.dataset.absRemove,'remove');return;}
+      const app=e.target.closest('[data-abs-approve]');if(app){changeAbs(app.dataset.absApprove,'approve');return;}
+      const cell=e.target.closest('[data-date-action]');if(cell){selectedDayAction={id:cell.dataset.person,date:cell.dataset.dateAction};$('dayActionPanel').hidden=false;$('dayActionTitle').textContent='Acción · '+selectedDayAction.date;$('dayActionPanel').scrollIntoView({behavior:'smooth',block:'start'});return;}
+      const monthly=e.target.closest('td[data-day][data-person]');if(monthly){openException(monthly.dataset.person,monthly.dataset.day);return;}
+      const except=e.target.closest('[data-exception]');if(except){openException(except.dataset.exception,except.dataset.start);return;}
+    });
+    $('newStaffBtn').addEventListener('click',newPerson);
+    $('cancelStaffBtn').addEventListener('click',closePersonPanels);
+    $('backStaffBtn').addEventListener('click',closePersonPanels);
+    $('detailEditStaff').addEventListener('click',()=>editPerson(currentPersonId));
+    $('detailNewAbs').addEventListener('click',()=>openAbsence(null,currentPersonId));
+    $('dayAddAbs').addEventListener('click',()=>{if(!selectedDayAction)return;const d=selectedDayAction;$('dayActionPanel').hidden=true;goto('personnel');openAbsence(null,d.id,d.date);});
+    $('dayAddShift').addEventListener('click',()=>{if(!selectedDayAction)return;const d=selectedDayAction;$('dayActionPanel').hidden=true;openException(d.id,d.date);});
+    $('dayCancel').addEventListener('click',()=>{$('dayActionPanel').hidden=true;selectedDayAction=null;});
+    $('yearPrev').addEventListener('click',()=>{currentYear--;renderYear();});
+    $('yearNext').addEventListener('click',()=>{currentYear++;renderYear();});
+    $('newAbsBtn').addEventListener('click',()=>openAbsence());
+    $('cancelAbsBtn').addEventListener('click',closeAbsence);
+    $('cancelShiftException').addEventListener('click',()=>{$('shiftExceptionPanel').hidden=true;});
+    for(const id of ['staffSearch','staffTeamFilter','absenceStatusFilter','absenceKindFilter']) $(id).addEventListener('input',renderPersonnel);
+    $('dailyDate').value=today;$('calendarMonth').value=today.slice(0,7);
+    for(const id of ['dailyDate','dailyShift','calendarMonth']) $(id).addEventListener('change',renderCalendar);
+    function monthOffset(delta){const [y,m]=$('calendarMonth').value.split('-').map(Number);const d=new Date(y,m-1+delta,1,12);$('calendarMonth').value=localISO(d).slice(0,7);renderCalendar();}
+    $('monthPrev').addEventListener('click',()=>monthOffset(-1));$('monthNext').addEventListener('click',()=>monthOffset(1));
+    // CSV & JSON. Files are downloaded locally; never uploaded to a server.
+    function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+    function quoteCSV(value){let t=String(value??'');if(/^[\s]*[=+@\-]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
+    function csv(rows){return '\ufeff'+rows.map(row=>row.map(quoteCSV).join(';')).join('\r\n');}
+    const STAFF_HEADERS=['matricula','nombre','apellidos','equipo','patron','ancla','activo'];
+    const ABS_HEADERS=['matricula','codigo','desde','hasta','estado','notas'];
+    function peopleRows(){return [STAFF_HEADERS,...staff.map(p=>[p.employeeNo,p.firstName,p.lastName,p.team,p.pattern,p.anchor,p.active?'1':'0'])];}
+    function absRows(){return [ABS_HEADERS,...absences.map(a=>[personById(a.personId)?.employeeNo||'',a.code,a.from,a.to,a.state,a.notes])];}
+    $('exportPeople').addEventListener('click',()=>download('ALUMALSA_Plantilla.csv',csv(peopleRows()),'text/csv;charset=utf-8'));
+    $('exportAbsences').addEventListener('click',()=>download('ALUMALSA_Permisos.csv',csv(absRows()),'text/csv;charset=utf-8'));
+    $('exportIncidents').addEventListener('click',()=>download('ALUMALSA_Incidencias.csv',csv([['id','seccion','equipo','descripcion','prioridad','responsable','turno','estado','fecha'],...records.map(r=>[r.id,r.area,r.equipment,r.description,r.priority,r.assignee,r.shift,r.status,new Date(r.created).toISOString()])]),'text/csv;charset=utf-8'));
+    $('exportBackup').addEventListener('click',()=>download('ALUMALSA_BACKUP_'+today+'.json',JSON.stringify({app:'ALUMALSA_CONTROL',version:2,exportedAt:new Date().toISOString(),incidents:records,staff,absences,shiftOverrides},null,2),'application/json'));
+    $('templatePeople').addEventListener('click',()=>download('Plantilla_Importacion_Personal.csv',csv([STAFF_HEADERS,['DEMO-201','Ejemplo','De Prueba','Verde','MTN',monday(today),'1']]),'text/csv;charset=utf-8'));
+    $('templateAbsences').addEventListener('click',()=>download('Plantilla_Importacion_Permisos.csv',csv([ABS_HEADERS,['DEMO-101','VAC',today,addDays(today,2),'Solicitado','Ejemplo ficticio']]),'text/csv;charset=utf-8'));
+    function detectCSV(text){
+      const firstLine=text.replace(/^\ufeff/,'').split(/\r?\n/)[0]||'';
+      const delim=firstLine.split(';').length>=firstLine.split(',').length?';':',';
+      const lines=[];let curr=[],value='',quotes=false;
+      for(let i=0;i<text.length;i++){
+        let ch=text[i];if(ch==='"') {if(quotes&&text[i+1]==='"'){value+='"';i++;}else quotes=!quotes;}
+        else if(ch===delim&&!quotes){curr.push(value);value='';}
+        else if((ch==='\r'||ch==='\n')&&!quotes){if(ch==='\r'&&text[i+1]==='\n')i++;curr.push(value);if(curr.some(x=>x.trim()))lines.push(curr);curr=[];value='';}
+        else value+=ch;
+      }
+      curr.push(value);if(curr.some(x=>x.trim()))lines.push(curr);
+      return lines.map(row=>row.map(x=>x.replace(/^\ufeff/,'').trim()));
+    }
+    function rowsWithHeader(text,headers){const rows=detectCSV(text),actual=(rows.shift()||[]).map(x=>x.toLowerCase());if(!headers.every(x=>actual.includes(x)))throw Error('Cabeceras no válidas. Descarga la plantilla de ejemplo.');return rows.map(row=>Object.fromEntries(headers.map(h=>[h,row[actual.indexOf(h)]||''])));}
+    async function readFile(input){if(!input.files?.[0])return '';return await input.files[0].text();}
+    $('importPeople').addEventListener('change',async e=>{
+      try{const data=rowsWithHeader(await readFile(e.target),STAFF_HEADERS);if(!data.length)throw Error('CSV vacío');
+        const draft=structuredClone(staff);let updated=0,created=0;
+        for(const [n,row] of data.entries()){
+          const no=row.matricula.trim(),pattern=(row.patron||'MAN').toUpperCase(),anchor=row.ancla||monday(today);
+          if(!no||!row.nombre||!row.apellidos||!validISO(anchor)||!(pattern in PATTERNS))throw Error(`Fila ${n+2}: matrícula, nombre, patrón o fecha no válidos`);
+          const existing=draft.find(x=>x.employeeNo.toLowerCase()===no.toLowerCase());
+          const obj={id:existing?.id||uid(),employeeNo:no,firstName:row.nombre,lastName:row.apellidos,team:row.equipo||'Otro',pattern,anchor:monday(anchor),active:!['0','false','no'].includes((row.activo||'1').toLowerCase())};
+          if(existing){Object.assign(existing,obj);updated++;}else{draft.push(obj);created++;}
+        }
+        if(!confirm(`Importar ${created} nuevos y actualizar ${updated} empleados?`))return;
+        staff=draft;savePeople();renderPersonnel();notify('✓ Plantilla importada');
+      }catch(err){alert('Importación cancelada: '+err.message)}finally{e.target.value='';}
+    });
+    $('importAbsences').addEventListener('change',async e=>{
+      try{const data=rowsWithHeader(await readFile(e.target),ABS_HEADERS);if(!data.length)throw Error('CSV vacío');
+        const draft=structuredClone(absences);
+        for(const [n,row] of data.entries()){
+          const p=staff.find(x=>x.employeeNo.toLowerCase()===row.matricula.toLowerCase());
+          if(!p||!ABS_CODES.includes(row.codigo)||!validISO(row.desde)||!validISO(row.hasta)||row.hasta<row.desde||!['Solicitado','Autorizado','Denegado'].includes(row.estado))throw Error(`Fila ${n+2}: matrícula, código, fecha o estado incorrectos`);
+          const a={id:uid(),personId:p.id,code:row.codigo,from:row.desde,to:row.hasta,state:row.estado,notes:row.notas||''};
+          if(draft.some(x=>x.personId===a.personId&&x.state!=='Denegado'&&a.state!=='Denegado'&&overlaps(x,a)))throw Error(`Fila ${n+2}: fechas solapadas`);
+          draft.push(a);
+        }
+        if(!confirm(`Importar ${data.length} registros de permisos?`))return;
+        absences=draft;savePeople();renderPersonnel();notify('✓ Permisos importados');
+      }catch(err){alert('Importación cancelada: '+err.message)}finally{e.target.value='';}
+    });
+    $('restoreFile').addEventListener('change',async e=>{
+      try{const file=await readFile(e.target),obj=JSON.parse(file);
+        if(obj.app!=='ALUMALSA_CONTROL'||obj.version!==2||![obj.incidents,obj.staff,obj.absences,obj.shiftOverrides].every(Array.isArray))throw Error('Copia no reconocida');
+        if(!obj.staff.every(x=>typeof x.employeeNo==='string'&&x.id)||!obj.absences.every(x=>x.id&&x.personId&&validISO(x.from)&&validISO(x.to)))throw Error('Estructura de personal o permisos incorrecta');
+        if(!confirm('Esta copia sustituirá todas las incidencias y registros de personal de ESTE dispositivo. ¿Restaurar?'))return;
+        records=obj.incidents;staff=obj.staff;absences=obj.absences;shiftOverrides=obj.shiftOverrides;
+        save();savePeople();closePersonPanels();goto('home');notify('✓ Copia restaurada');
+      }catch(err){alert('No se pudo restaurar: '+err.message)}finally{e.target.value='';}
+    });
+    renderPersonnel();
+    redraw();
+  </script>
+</body>
+</html>
