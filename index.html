@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#102722" />
   <meta name="description" content="ALUMALSA CONTROL · Aplicación multiusuario de prueba" />
-  <title>ALUMALSA CONTROL v0.6.2 · Multiusuario</title>
+  <title>ALUMALSA CONTROL v0.6.3 · Multiusuario</title>
   <script src="https://telegram.org/js/telegram-web-app.js?65"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
@@ -309,6 +309,22 @@
 @media(max-width:640px){.ac-modal{padding:17px;border-radius:14px}.hero-heading{flex-direction:column;gap:8px}.personal-menu{flex-wrap:nowrap;overflow-x:auto}.personal-menu button{flex:0 0 auto;font-size:12px}}
 .profile-trigger:empty{display:none}
 
+/* v0.6.3 · Registro de jornadas y horas especiales */
+.work-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}
+.work-metric{background:#f1f7f3;border:1px solid #d6e7dc;border-radius:12px;padding:12px;min-width:0}
+.work-metric b{font-size:19px;color:#135e40;display:block}
+.work-metric span{color:#53695c;font-size:11px}
+.work-disclaimer{grid-column:1/-1;margin:0}
+.work-section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:16px 0 9px;flex-wrap:wrap}
+.work-entry{display:flex;align-items:start;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #e2eae4}
+.work-entry .inline-buttons{display:flex;gap:4px;flex-wrap:wrap}
+.work-entry-form{border:1px solid #dce9df;border-radius:13px;padding:13px;margin-top:16px;background:#f9fbf9}
+.work-entry-form .primary{margin:6px 0 5px}
+.hours-mini{display:block;font-size:9px;font-weight:750;line-height:1.1;color:#155b44;white-space:nowrap}
+.hours-mini.planned{color:#b57921}
+.day i{font-size:9px}
+.cal-cell{min-width:35px}
+
 /* v0.6: Pantallas grandes y estado de conexión. */
 @media (min-width: 900px) {
   .shell { max-width: 1240px; width: calc(100vw - 250px); margin: 0 24px 0 226px; padding-bottom: 35px; }
@@ -345,11 +361,13 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
 .cloud-identity{color:#245c44;background:white;border:1px solid #c9dfd1;border-radius:999px;padding:5px 9px;font-size:11px;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:600px){.cloud-bar-who{align-items:flex-start;flex-direction:column;gap:7px}.cloud-identity{max-width:100%}}
 
+@media(max-width:650px){.work-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.work-entry{flex-direction:column}.day-action-tabs{flex-wrap:wrap}.work-metric b{font-size:16px}}
+
 </style>
 </head>
 <body>
   <div id="cloudGate" class="cloud-gate"><div class="cloud-card">
-    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.2</span></div>
+    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.3</span></div>
     <h1>Espacio de trabajo compartido</h1><p class="cloud-intro">Una misma información en PC, iPhone y otros móviles. Solo para datos ficticios o expresamente autorizados.</p>
     <div id="cloudSetup" class="cloud-step"><h2>1. Conectar base de datos</h2><p>Crea un proyecto gratis en Supabase. Introduce únicamente la URL pública del proyecto y su <b>publishable key</b> (o anon key). Nunca utilices la service_role/secret key.</p>
       <label>Project URL<input id="cloudUrl" type="url" inputmode="url" placeholder="https://xxxx.supabase.co" autocapitalize="off" autocomplete="off"></label>
@@ -374,7 +392,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <header class="hero">
       <div class="hero-top">
         <div class="brand"><span class="logo" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4v-4l6 4V5l6-2v18H3Z"/><path d="M7 18h.01M12 18h.01M17 18h.01"/></svg></span><div><div class="brand-name">ALUMALSA <b>CONTROL</b></div><div class="eyebrow">Centro de operaciones</div></div></div>
-        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.2</span>
+        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.3</span>
       </div>
       <div class="hero-heading"><button id="appBackBtn" type="button" class="app-back" aria-label="Volver a la pantalla anterior" hidden>← Volver</button><div><div class="hero-topline" id="heroDate">PANEL OPERATIVO</div><h1 id="heroTitle">Panel de producción</h1><p id="heroDesc">Registro y seguimiento de incidencias</p></div></div>
     </header>
@@ -411,7 +429,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
         <div class="section-head"><div><span class="mini-label">ACTIVIDAD</span><h2>Últimas incidencias</h2></div><button class="linkbtn" data-nav="history">Ver historial <span aria-hidden="true">→</span></button></div>
         <div id="recentList" class="record-list"></div>
         <div class="home-utilities"><button class="outlined" type="button" id="copySummary">⧉ Copiar resumen de avisos</button></div>
-        <div class="note demo-note"><strong>v0.6.2 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
+        <div class="note demo-note"><strong>v0.6.3 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
       </section>
       <section id="view-new" hidden>
         <div class="view-title">Registrar incidencia</div>
@@ -464,6 +482,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
               <div class="form-row"><label class="field"><span>Nombre *</span><input name="firstName" required maxlength="60"></label><label class="field"><span>Apellidos *</span><input name="lastName" required maxlength="90"></label></div>
               <label class="field"><span>Patrón de turnos</span><select name="pattern" id="staffPattern"><option value="MTN">M-T-N (semanal)</option><option value="TMN">T-M-N (semanal)</option><option value="NTM">N-T-M (semanal)</option><option value="MT">M-T (semanal)</option><option value="TM">T-M (semanal)</option><option value="FM">Fijo mañana</option><option value="FT">Fijo tarde</option><option value="FN">Fijo noche</option><option value="4T">4 turnos · manual</option><option value="MAN">Sin patrón · manual</option></select></label>
               <label class="field"><span>Semana inicial del patrón (lunes)</span><input name="anchor" type="date" required></label>
+              <label class="field"><span>Horas nominales por turno (estimación)</span><input type="number" name="regularHours" min="1" max="16" step="0.25" value="8" required/><small class="help">Referencia orientativa para horas acumuladas según calendario, no fichaje real.</small></label>
               <label class="field"><span>Situación</span><select name="active"><option value="true">Activo</option><option value="false">Inactivo</option></select></label>
               <button class="primary" type="submit">Guardar trabajador</button>
               <button class="outlined" style="width:100%;margin-top:9px" type="button" id="cancelStaffBtn">Cancelar</button>
@@ -471,10 +490,10 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
           </div>
           <div id="staffDetail" hidden>
             <div class="section-actionbar"><button class="outlined" id="backStaffBtn">← Plantilla</button><div class="date-actions"><button type="button" id="yearPrev">‹</button><b id="personYearText">2026</b><button type="button" id="yearNext">›</button></div></div>
-            <div class="panel"><h2 id="detailPersonName">Trabajador</h2><p id="detailPersonMeta"></p><div class="summary-bar" id="detailPersonStats"></div><div class="inline-buttons"><button class="outlined" type="button" id="detailNewAbs">+ Permiso</button><button class="outlined" type="button" id="detailEditStaff">Editar ficha</button></div></div>
+            <div class="panel"><h2 id="detailPersonName">Trabajador</h2><p id="detailPersonMeta"></p><div class="summary-bar" id="detailPersonStats"></div><div id="detailPersonHours" class="work-metrics" aria-label="Horas registradas del año"></div><div class="inline-buttons"><button class="outlined" type="button" id="detailNewAbs">+ Permiso</button><button class="outlined" type="button" id="detailEditStaff">Editar ficha</button><button class="outlined" type="button" id="detailExportHours">⬇ Horas del año CSV</button></div></div>
             <div class="section-head"><h2>Calendario anual</h2></div>
-            <div class="legend"><span><i class="swatch m"></i>Mañana</span><span><i class="swatch t"></i>Tarde</span><span><i class="swatch n"></i>Noche</span><span><i class="swatch v"></i>Vacaciones</span><span><i class="swatch p"></i>Permiso</span><span>F = Festivo</span><span>D = Fin de semana</span></div>
-            <p class="help">Pulsa un día para registrar vacaciones, permisos o una excepción de turno. Los fines de semana y festivos configurados figuran como descanso/fiesta, salvo turno manual. Los patrones siguen siendo orientativos; confirma el calendario de empresa.</p>
+            <div class="legend"><span><i class="swatch m"></i>Mañana</span><span><i class="swatch t"></i>Tarde</span><span><i class="swatch n"></i>Noche</span><span><i class="swatch v"></i>Vacaciones</span><span><i class="swatch p"></i>Permiso</span><span>⏱ = horas registradas</span><span>F = Festivo</span><span>D = Fin de semana</span></div>
+            <p class="help">Pulsa un día para registrar vacaciones, permisos, horarios especiales, horas extra o una excepción de turno. Los fines de semana y festivos configurados figuran como descanso/fiesta, salvo turno manual. Los patrones siguen siendo orientativos; confirma el calendario de empresa.</p>
             <div id="dayActionPanel" hidden class="panel"><h2 id="dayActionTitle">Acción del día</h2><p>Selecciona qué deseas registrar.</p><div class="inline-buttons"><button type="button" class="outlined" id="dayAddAbs">Vacaciones / permiso</button><button type="button" class="outlined" id="dayAddShift">Cambiar turno</button><button type="button" class="outlined" id="dayCancel">Cancelar</button></div></div><div id="yearGrid" class="year-matrix"></div>
           </div>
         </div>
@@ -498,7 +517,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
         </div>
         <div id="personal-files" hidden>
           <div class="panel"><h2>Exportación y copias</h2><p>La información se guarda en la base de datos compartida. Descarga copias de seguridad periódicamente; el plan gratuito no incluye copias automáticas.</p>
-            <div class="file-commands"><button class="outlined" id="exportBackup">⬇ Copia completa JSON</button><button class="outlined" id="exportPeople">⬇ Plantilla CSV</button><button class="outlined" id="exportAbsences">⬇ Permisos CSV</button><button class="outlined" id="exportIncidents">⬇ Incidencias CSV</button></div>
+            <div class="file-commands"><button class="outlined" id="exportBackup">⬇ Copia completa JSON</button><button class="outlined" id="exportPeople">⬇ Plantilla CSV</button><button class="outlined" id="exportAbsences">⬇ Permisos CSV</button><button class="outlined" id="exportHours">⬇ Horas registradas CSV</button><button class="outlined" id="exportIncidents">⬇ Incidencias CSV</button></div>
             <div class="import-zone"><strong>Restaurar copia JSON</strong><p class="help">La restauración completa queda deshabilitada en modo multiusuario para evitar sobrescribir datos de otros compañeros.</p><input id="restoreFile" type="file" accept=".json,application/json" /></div>
             <div class="import-zone"><strong>Importar plantilla desde CSV</strong><p class="help">Cabeceras: matricula;nombre;apellidos;equipo;patron;ancla;activo. Acepta CSV UTF-8 separado por punto y coma o coma. No importa .xlsx directamente.</p><input id="importPeople" type="file" accept=".csv,text/csv"/><button type="button" class="outlined" style="margin-top:9px" id="templatePeople">Descargar plantilla CSV</button></div>
             <div class="import-zone"><strong>Importar permisos desde CSV</strong><p class="help">Cabeceras: matricula;codigo;desde;hasta;estado;notas. Fechas AAAA-MM-DD. Las matrículas deben existir.</p><input id="importAbsences" type="file" accept=".csv,text/csv"/><button type="button" class="outlined" style="margin-top:9px" id="templateAbsences">Descargar plantilla CSV</button></div>
@@ -592,7 +611,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <div class="form-actions"><button class="outlined" id="exportHolidays">Exportar festivos CSV</button><button class="outlined" id="holidayTemplate">Plantilla CSV</button></div>
     <div class="import-zone"><strong>Importar festivos CSV</strong><p class="help">Cabeceras: fecha;nombre;tipo (AAAA-MM-DD). Los duplicados por fecha se actualizan.</p><input type="file" id="holidayFile" accept=".csv,text/csv"/></div>
   </div>
-  <div class="section-actionbar"><strong>Festivos registrados</strong><select id="holidayYear" class="filter" style="max-width:140px"><option>2026</option><option>2027</option><option>2028</option></select></div>
+  <div class="section-actionbar"><strong>Festivos registrados</strong><input id="holidayYear" type="number" min="2020" max="2100" step="1" value="2026" class="filter" style="max-width:140px" aria-label="Año del calendario laboral"/></div>
   <div id="holidayList"></div>
 </section>
 
@@ -614,6 +633,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <div class="segmented day-action-tabs" aria-label="Acción sobre la jornada">
       <button type="button" class="on" data-day-mode="shift">Cambiar turno</button>
       <button type="button" data-day-mode="absence">Permiso / vacaciones</button>
+      <button type="button" data-day-mode="hours">Horarios y horas</button>
     </div>
     <form id="calendarDayShiftForm">
       <label class="field"><span>Turno de este día</span><select name="code">
@@ -642,6 +662,27 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
       <button type="submit" class="primary">Guardar permiso / vacaciones</button>
       <button type="button" id="calendarDayRemoveAbs" class="outlined danger-outline" hidden>Eliminar este permiso</button>
     </form>
+    <div id="calendarDayWorkPanel" hidden>
+      <div class="work-section-head"><strong>Tramos de trabajo del día</strong><span class="help">Incluye jornadas de 10–18, 06–18, 10–22 y horas extra</span></div>
+      <div class="day-current" id="workDayTotals">Sin horas registradas</div>
+      <div id="workEntryList"></div>
+      <form id="calendarDayWorkForm" class="work-entry-form">
+        <input type="hidden" name="entryId"/>
+        <div class="form-row">
+          <label class="field"><span>Inicio</span><input name="start" type="time" required value="10:00"/></label>
+          <label class="field"><span>Fin</span><input name="end" type="time" required value="18:00"/></label>
+        </div>
+        <div class="form-row">
+          <label class="field"><span>Tipo de horas</span><select name="kind"><option value="ordinary">Jornada normal / especial</option><option value="extra">Horas extraordinarias</option></select></label>
+          <label class="field"><span>Estado</span><select name="state"><option value="planned">Previsto</option><option value="completed">Realizado</option></select></label>
+        </div>
+        <label class="field"><span>Descansos no computables (minutos)</span><input name="breakMinutes" type="number" min="0" max="240" step="1" value="0" required/></label>
+        <label class="field"><span>Observaciones</span><input name="notes" maxlength="200" placeholder="Ej. cobertura especial de línea"/></label>
+        <button id="workSaveButton" type="submit" class="primary">Añadir tramo</button>
+        <button id="workCancelEdit" type="button" class="outlined" hidden>Cancelar edición</button>
+      </form>
+      <p class="help">El cálculo se hace por diferencia entre horas, descontando descansos; admite fin al día siguiente. Para distinguir horario normal y extra divide los tramos (06–14 normal + 14–18 extra). Las horas previstas no se suman como realizadas. No sustituye a fichajes ni a nóminas.</p>
+    </div>
     <p class="help ac-modal-footnote">Los cambios autorizados se guardan en el espacio compartido y se sincronizan con los demás usuarios.</p>
   </dialog>
   <dialog id="userProfileDialog" class="ac-modal" aria-labelledby="userProfileTitle">
@@ -826,10 +867,67 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       const valid=absences.filter(x=>x.personId===id&&x.from<=date&&x.to>=date&&x.state!=='Denegado');
       return valid.find(x=>x.state==='Autorizado')||valid[0]||null;
     }
+    // Jornadas: se guardan como tramos dentro del documento 'shift' de persona+fecha.
+    // Sin nueva tabla SQL, con revisiones y auditoría Supabase existentes.
+    const WORK_STATES = ['planned','completed'];
+    const WORK_KINDS = ['ordinary','extra'];
+    function shiftRecord(personId,date) {return shiftOverrides.find(x=>x.personId===personId&&x.date===date);}
+    function workEntries(personId,date) {const r=shiftRecord(personId,date);return Array.isArray(r?.entries)?r.entries:[];}
+    function workMinutes(entry) {
+      if(!entry||!/^\d\d:\d\d$/.test(entry.start||'')||!/^\d\d:\d\d$/.test(entry.end||''))return 0;
+      const toMinutes=v=>Number(v.slice(0,2))*60+Number(v.slice(3,5));
+      const a=toMinutes(entry.start), b=toMinutes(entry.end);
+      if(a>=1440||b>=1440||a===b)return 0;
+      const gross=b>a?b-a:b+1440-a;
+      const breakM=Number(entry.breakMinutes)||0;
+      return Math.max(0,gross-breakM);
+    }
+    function asHours(minutes){return (minutes/60).toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2})+' h';}
+    function yearWorkSummary(personId,year) {
+      const entries=shiftOverrides.filter(x=>x.personId===personId&&x.date.startsWith(String(year)+'-')).flatMap(x=>workEntries(personId,x.date));
+      const result={ordinary:0,extra:0,planned:0,days:new Set()};
+      for(const r of shiftOverrides.filter(x=>x.personId===personId&&x.date.startsWith(String(year)+'-'))){
+        for(const e of workEntries(personId,r.date)){
+          const min=workMinutes(e);
+          if(e.state==='completed'){result[e.kind==='extra'?'extra':'ordinary']+=min;result.days.add(r.date);}
+          else result.planned+=min;
+        }
+      }
+      result.total=result.ordinary+result.extra;
+      result.days=result.days.size;
+      return result;
+    }
+    // Estimación desde el cuadrante para evitar exigir fichajes manuales cada día.
+    // No es una acreditación de horas trabajadas ni se usa para liquidación de horas extra.
+    function estimatedYearHours(person,year){
+      const start=String(year)+'-01-01', end=String(year)+'-12-31';
+      const cutoff=end<today?end:today;
+      if(cutoff<start)return 0;
+      const nominal=Number(person.regularHours??8);
+      let minutes=0;
+      for(let d=start;d<=cutoff;d=addDays(d,1)){
+        if(absentOn(person.id,d)?.state==='Autorizado')continue;
+        const entries=workEntries(person.id,d),ordinary=entries.filter(x=>x.kind!=='extra'),extra=entries.filter(x=>x.kind==='extra'&&x.state==='completed');
+        const base=ordinary.length?ordinary.reduce((v,e)=>v+workMinutes(e),0):['M','T','N'].includes(plannedShift(person,d))?nominal*60:0;
+        minutes+=base+extra.reduce((v,e)=>v+workMinutes(e),0);
+      }
+      return minutes;
+    }
+    function dayWorkSummary(personId,date) {
+      const entries=workEntries(personId,date);
+      const completed=entries.filter(e=>e.state==='completed').reduce((a,e)=>a+workMinutes(e),0);
+      const planned=entries.filter(e=>e.state!=='completed').reduce((a,e)=>a+workMinutes(e),0);
+      return {completed,planned,entries};
+    }
+    function timeOverlap(a,b){
+      const mins=v=>Number(v.slice(0,2))*60+Number(v.slice(3,5));
+      const range=e=>{const start=mins(e.start),finish=mins(e.end);return [start,finish<=start?finish+1440:finish];};
+      const [a0,a1]=range(a),[b0,b1]=range(b);return Math.max(a0,b0)<Math.min(a1,b1);
+    }
     function plannedShift(person,date) {
       if(!person)return '';
       const override=shiftOverrides.find(x=>x.personId===person.id&&x.date===date);
-      if(override) return override.code;
+      if(override?.code) return override.code;
       if(holidayAt(date))return 'F';
       if(isWeekend(date))return 'D';
       const seq=PATTERNS[person.pattern]||[];
@@ -844,7 +942,12 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       const code=plannedShift(person,date);
       return {label:code||'—',css:code==='M'?'shiftM':code==='T'?'shiftT':code==='N'?'shiftN':code==='F'?'officialholiday':code==='D'?'offday':'',status:code==='F'?offName(date):code==='D'?'Fin de semana':'previsto',abs:null};
     }
-    function cellContent(person,date){const v=dayStatus(person,date);return `<td tabindex="0" role="button" aria-label="Editar ${escapeHTML(fullName(person))} ${date}: ${escapeHTML(v.label)}" data-day="${date}" data-person="${escapeHTML(person.id)}" class="cal-cell ${v.css} ${shiftOverrides.some(x=>x.personId===person.id&&x.date===date)?'manual':''}" title="${escapeHTML(fullName(person))} · ${date} · ${escapeHTML(v.label)} ${escapeHTML(v.status)}">${escapeHTML(v.label)}</td>`;}
+    function cellContent(person,date){
+      const v=dayStatus(person,date),h=dayWorkSummary(person.id,date);
+      const marker=h.completed?`<small class="hours-mini">${escapeHTML(asHours(h.completed))}</small>`:h.planned?'<small class="hours-mini planned">◷</small>':'';
+      const manual=!!shiftRecord(person.id,date)?.code;
+      return `<td tabindex="0" role="button" aria-label="Editar ${escapeHTML(fullName(person))} ${date}: ${escapeHTML(v.label)}${h.completed?' · '+escapeHTML(asHours(h.completed))+' registradas':''}" data-day="${date}" data-person="${escapeHTML(person.id)}" class="cal-cell ${v.css} ${manual?'manual':''}" title="${escapeHTML(fullName(person))} · ${date} · ${escapeHTML(v.label)} · ${escapeHTML(asHours(h.completed))} realizadas · ${escapeHTML(asHours(h.planned))} previstas">${escapeHTML(v.label)}${marker}</td>`;
+    }
     function updatePersonalMenu(){
       const section=currentView==='calendar'?'calendar':personalTab;
       document.querySelectorAll('[data-person-section]').forEach(b=>{
@@ -888,14 +991,14 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       currentPersonId=null;
       $('staffListMode').hidden=true;$('staffDetail').hidden=true;$('staffEditor').hidden=false;
       $('staffEditorTitle').textContent='Alta de trabajador';$('staffForm').reset();
-      $('staffForm').elements.editId.value='';$('staffForm').elements.anchor.value=monday(today);
+      $('staffForm').elements.editId.value='';$('staffForm').elements.anchor.value=monday(today);$('staffForm').elements.regularHours.value='8';
     }
     function editPerson(id){
       const p=personById(id);if(!p)return;
       activatePersonal('staff');$('staffListMode').hidden=true;$('staffDetail').hidden=true;$('staffEditor').hidden=false;
       $('staffEditorTitle').textContent='Editar trabajador';
       const f=$('staffForm'); for(const key of ['employeeNo','firstName','lastName','team','pattern','anchor'])f.elements[key].value=p[key]||'';
-      f.elements.editId.value=p.id;f.elements.active.value=String(p.active);
+      f.elements.editId.value=p.id;f.elements.active.value=String(p.active);f.elements.regularHours.value=String(p.regularHours??8);
       window.scrollTo(0,0);
     }
     function closePersonPanels(){currentPersonId=null;$('staffEditor').hidden=true;$('staffDetail').hidden=true;$('staffListMode').hidden=false;renderPersonnel();}
@@ -911,15 +1014,18 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       $('detailPersonMeta').textContent=p.employeeNo+' · Equipo '+p.team+' · Patrón '+p.pattern+' · '+(p.active?'Activo':'Inactivo');
       const year=String(currentYear), approved=rangeApproved(p,year), vacations=approved.filter(x=>x.code==='VAC');
       const dayCount=approved.reduce((sum,a)=>sum+1+Math.round((fromISO(a.to<year+'-12-31'?a.to:year+'-12-31')-fromISO(a.from>year+'-01-01'?a.from:year+'-01-01'))/86400000),0);
+      const hourTotals=yearWorkSummary(p.id,currentYear);
+      const estimatedMinutes=estimatedYearHours(p,currentYear);
       $('detailPersonStats').innerHTML=`<span>${approved.length} ausencias autorizadas</span><span>${vacations.length} periodos de vacaciones</span><span>${dayCount} días naturales con ausencia</span>`;
+      $('detailPersonHours').innerHTML=`<div class="work-metric"><b>${escapeHTML(asHours(hourTotals.total))}</b><span>Realizadas registradas</span></div><div class="work-metric"><b>${escapeHTML(asHours(hourTotals.ordinary))}</b><span>Horas ordinarias</span></div><div class="work-metric"><b>${escapeHTML(asHours(hourTotals.extra))}</b><span>Horas extra</span></div><div class="work-metric"><b>${escapeHTML(asHours(hourTotals.planned))}</b><span>Pendientes de confirmar</span></div><div class="work-metric"><b>${escapeHTML(asHours(estimatedMinutes))}</b><span>Estimadas por calendario (hasta hoy)</span></div><p class="help work-disclaimer">Horas realizadas: únicamente tramos registrados (${hourTotals.days} días). Horas estimadas: turnos del calendario × horas nominales, ajustadas por ausencias autorizadas y tramos especiales; no son fichajes ni nómina.</p>`;
       let out='';
       for(let month=0;month<12;month++){
         const first=new Date(currentYear,month,1,12), n=new Date(currentYear,month+1,0,12).getDate(),offset=(first.getDay()+6)%7;
         let days=DAYS.map(x=>`<span class="head">${x}</span>`).join('')+'<span class="blank"></span>'.repeat(offset);
         for(let day=1;day<=n;day++){
           const date=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-          const result=dayStatus(p,date), label=result.label==='—'?'':result.label;
-          days+=`<button class="day ${result.css} ${date===today?'today':''}" data-date-action="${date}" data-person="${escapeHTML(p.id)}" title="${date} · ${escapeHTML(label)}" type="button"><span>${day}</span><i>${escapeHTML(label)}</i></button>`;
+          const result=dayStatus(p,date), label=result.label==='—'?'':result.label, hours=dayWorkSummary(p.id,date);
+          days+=`<button class="day ${result.css} ${date===today?'today':''}" data-date-action="${date}" data-person="${escapeHTML(p.id)}" title="${date} · ${escapeHTML(label)} · ${escapeHTML(asHours(hours.completed))} realizadas" type="button"><span>${day}</span><i>${escapeHTML(label)}${hours.completed?' · '+escapeHTML(asHours(hours.completed)):hours.planned?' · ◷':''}</i></button>`;
         }
         out+=`<div class="month-card"><h4>${MONTHS[month]}</h4><div class="month-days">${days}</div></div>`;
       }
@@ -929,8 +1035,8 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       e.preventDefault();const f=e.target, d=new FormData(f),editId=String(d.get('editId')||''), no=String(d.get('employeeNo')||'').trim(),anchor=String(d.get('anchor')||'');
       if(!no || !validISO(anchor)){notify('Revisa matrícula y semana inicial');return;}
       if(staff.some(x=>x.employeeNo.toLowerCase()===no.toLowerCase()&&x.id!==editId)){notify('Matrícula duplicada');return;}
-      const p={id:editId||uid(),employeeNo:no,firstName:String(d.get('firstName')||'').trim(),lastName:String(d.get('lastName')||'').trim(),team:String(d.get('team')),pattern:String(d.get('pattern')),anchor:monday(anchor),active:d.get('active')==='true'};
-      if(!p.firstName||!p.lastName){notify('Nombre y apellidos obligatorios');return;}
+      const p={id:editId||uid(),employeeNo:no,firstName:String(d.get('firstName')||'').trim(),lastName:String(d.get('lastName')||'').trim(),team:String(d.get('team')),pattern:String(d.get('pattern')),anchor:monday(anchor),regularHours:Number(d.get('regularHours')||8),active:d.get('active')==='true'};
+      if(!p.firstName||!p.lastName||!(p.regularHours>0&&p.regularHours<=16)){notify('Nombre, apellidos y horas nominales (1–16) obligatorios');return;}
       if(editId)staff[staff.findIndex(x=>x.id===editId)]=p;else staff.push(p);
       savePeople();closePersonPanels();notify('✓ Trabajador guardado');
     });
@@ -983,7 +1089,7 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       const available=all.filter(x=>!x.v.abs||x.v.abs.state!=='Autorizado');
       const rows=all.filter(x=>!shift||x.planned===shift);
       $('dailyStats').innerHTML=`<span>${active.length} activos</span><span>${absence} ausentes autorizados</span><span>${requested} solicitudes pendientes</span><span>${available.length} sin ausencia autorizada</span>`;
-      $('dailyPeople').innerHTML=rows.length?rows.map(({p,v,planned})=>`<article class="person-row"><div class="person-icon">${escapeHTML(planned||'?')}</div><div class="person-info"><div class="person-name">${escapeHTML(fullName(p))}</div><div class="person-sub">${escapeHTML(p.employeeNo)} · ${escapeHTML(p.team)} · Turno previsto: ${escapeHTML(planned||'Manual')}</div><div class="badge-line" style="margin-top:7px"><span class="state ${v.abs?escapeHTML(v.abs.state):'Autorizado'}">${v.abs?escapeHTML(v.label+' · '+v.abs.state):'Sin ausencia registrada'}</span></div><div class="person-controls"><button class="small-btn" data-person-detail="${escapeHTML(p.id)}">Ficha</button><button class="small-btn secondary" data-person-abs="${escapeHTML(p.id)}" data-start="${date}">+ Permiso</button><button class="small-btn secondary" data-exception="${escapeHTML(p.id)}" data-start="${date}">Cambiar turno</button></div></div></article>`).join(''):'<div class="empty-note">Ningún empleado en este turno / fecha.</div>';
+      $('dailyPeople').innerHTML=rows.length?rows.map(({p,v,planned})=>`<article class="person-row"><div class="person-icon">${escapeHTML(planned||'?')}</div><div class="person-info"><div class="person-name">${escapeHTML(fullName(p))}</div><div class="person-sub">${escapeHTML(p.employeeNo)} · ${escapeHTML(p.team)} · Turno previsto: ${escapeHTML(planned||'Manual')} · ${escapeHTML(asHours(dayWorkSummary(p.id,date).completed))} realizadas</div><div class="badge-line" style="margin-top:7px"><span class="state ${v.abs?escapeHTML(v.abs.state):'Autorizado'}">${v.abs?escapeHTML(v.label+' · '+v.abs.state):'Sin ausencia registrada'}</span></div><div class="person-controls"><button class="small-btn" data-person-detail="${escapeHTML(p.id)}">Ficha</button><button class="small-btn secondary" data-person-abs="${escapeHTML(p.id)}" data-start="${date}">+ Permiso</button><button class="small-btn secondary" data-exception="${escapeHTML(p.id)}" data-start="${date}">Cambiar turno</button><button class="small-btn secondary" data-work-day="${escapeHTML(p.id)}" data-start="${date}">⏱ Horas</button></div></div></article>`).join(''):'<div class="empty-note">Ningún empleado en este turno / fecha.</div>';
     }
     function renderMonthly(){
       const m=$('calendarMonth').value||today.slice(0,7), year=Number(m.slice(0,4)), month=Number(m.slice(5,7)),days=new Date(year,month,0,12).getDate();
@@ -1009,8 +1115,9 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
     }
     $('shiftExceptionForm').addEventListener('submit',e=>{
       e.preventDefault();const f=e.target,id=f.elements.personId.value,date=f.elements.date.value,code=f.elements.code.value;
+      const old=shiftRecord(id,date), entries=workEntries(id,date);
       shiftOverrides=shiftOverrides.filter(x=>!(x.personId===id&&x.date===date));
-      if(code)shiftOverrides.push({personId:id,date,code});
+      if(code||entries.length)shiftOverrides.push({...old,personId:id,date,code,entries,...actorStamp()});
       savePeople();$('shiftExceptionPanel').hidden=true;renderCalendar();notify('✓ Turno actualizado');
     });
     // Ventana de edición unificada del calendario (no cambia el patrón anual).
@@ -1020,6 +1127,7 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       if(!editingDay)return;
       $('calendarDayShiftForm').hidden=mode!=='shift';
       $('calendarDayAbsForm').hidden=mode!=='absence';
+      $('calendarDayWorkPanel').hidden=mode!=='hours';
       document.querySelectorAll('[data-day-mode]').forEach(b=>{
         b.classList.toggle('on',b.dataset.dayMode===mode);b.setAttribute('aria-pressed',String(b.dataset.dayMode===mode));
       });
@@ -1042,6 +1150,7 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       $('calendarDayRemoveAbs').hidden=!found;
       $('calendarDayAudit').hidden=!(found?.updatedByLabel||found?.updatedAt);
       $('calendarDayAudit').textContent=found?.updatedAt?`Última modificación: ${found.updatedByLabel||'Usuario'} · ${new Date(found.updatedAt).toLocaleString('es-ES')}`:'';
+      resetWorkEntryForm();renderWorkEntries();
       setCalendarDayMode(found?'absence':'shift');
       const dialog=$('calendarDayDialog');if(!dialog.open)dialog.showModal();
     }
@@ -1053,8 +1162,9 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
     $('calendarDayShiftForm').addEventListener('submit',e=>{
       e.preventDefault();if(!editingDay)return;
       const {personId,date}=editingDay,code=e.target.elements.code.value;
+      const old=shiftRecord(personId,date),entries=workEntries(personId,date);
       shiftOverrides=shiftOverrides.filter(x=>!(x.personId===personId&&x.date===date));
-      if(code)shiftOverrides.push({personId,date,code,...actorStamp()});
+      if(code||entries.length)shiftOverrides.push({...old,personId,date,code,entries,...actorStamp()});
       savePeople();closeCalendarDay();renderPersonnel();renderCalendar();notify('✓ Turno puntual guardado');
     });
     $('calendarDayAbsForm').addEventListener('submit',e=>{
@@ -1080,6 +1190,75 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       const a=absences.find(x=>x.id===editingAbsId);if(!a)return;
       if(!confirm(`¿Eliminar el permiso ${a.code} completo del ${a.from} al ${a.to}?`))return;
       absences=absences.filter(x=>x.id!==a.id);savePeople();closeCalendarDay();renderPersonnel();renderCalendar();notify('Permiso eliminado');
+    });
+    // HORARIOS ESPECIALES Y HORAS EXTRA v0.6.3
+    function resetWorkEntryForm(){
+      const f=$('calendarDayWorkForm');f.reset();f.elements.entryId.value='';
+      f.elements.start.value='10:00';f.elements.end.value='18:00';f.elements.breakMinutes.value='0';
+      f.elements.state.value='planned';f.elements.kind.value='ordinary';
+      $('workSaveButton').textContent='Añadir tramo';$('workCancelEdit').hidden=true;
+    }
+    function renderWorkEntries(){
+      if(!editingDay)return;
+      const {personId,date}=editingDay,items=workEntries(personId,date),s=dayWorkSummary(personId,date);
+      const totals=items.filter(x=>x.state==='completed').reduce((r,x)=>{r[x.kind==='extra'?'extra':'ordinary']+=workMinutes(x);return r;},{ordinary:0,extra:0});
+      $('workDayTotals').textContent=`Realizadas: ${asHours(s.completed)} (normales ${asHours(totals.ordinary)} + extra ${asHours(totals.extra)}) · Previstas: ${asHours(s.planned)}`;
+      $('workEntryList').innerHTML=items.length?items.map(e=>`<div class="work-entry"><div><strong>${escapeHTML(e.start)}–${escapeHTML(e.end)} · ${escapeHTML(asHours(workMinutes(e)))}</strong><div class="help">${e.kind==='extra'?'Horas extra':'Jornada ordinaria/especial'} · ${e.state==='completed'?'Realizado':'Previsto'}${e.breakMinutes?' · '+escapeHTML(String(e.breakMinutes))+' min descanso':''}</div>${e.notes?`<div class="help">${escapeHTML(e.notes)}</div>`:''}</div><div class="inline-buttons"><button class="small-btn secondary" type="button" data-work-edit="${escapeHTML(e.id)}">Editar</button><button class="small-btn secondary" type="button" data-work-delete="${escapeHTML(e.id)}">Eliminar</button></div></div>`).join(''):'<div class="empty-note">Todavía no hay tramos registrados para este día.</div>';
+    }
+    function setWorkEntries(personId,date,items){
+      const existing=shiftRecord(personId,date);
+      shiftOverrides=shiftOverrides.filter(x=>!(x.personId===personId&&x.date===date));
+      if(existing?.code||items.length)shiftOverrides.push({...existing,personId,date,code:existing?.code||'',entries:items,...actorStamp()});
+      savePeople();renderWorkEntries();renderCalendar();
+      if(currentPersonId===personId&&!$('staffDetail').hidden)renderYear();
+    }
+    $('calendarDayWorkForm').addEventListener('submit',e=>{
+      e.preventDefault();if(!editingDay)return;
+      const {personId,date}=editingDay,form=e.target;
+      const id=form.elements.entryId.value||uid(),start=form.elements.start.value,end=form.elements.end.value;
+      const breakMinutes=Number(form.elements.breakMinutes.value),kind=form.elements.kind.value,state=form.elements.state.value;
+      const notes=form.elements.notes.value.trim();
+      const entry={id,start,end,breakMinutes,kind,state,notes,...actorStamp()};
+      const raw=/^\d{2}:\d{2}$/;
+      if(!raw.test(start)||!raw.test(end)||start===end||!WORK_KINDS.includes(kind)||!WORK_STATES.includes(state)||!Number.isInteger(breakMinutes)||breakMinutes<0||breakMinutes>240||workMinutes(entry)<=0||workMinutes(entry)>16*60){notify('Revisa horario, descanso y duración máxima (16 h)');return;}
+      if(state==='completed'&&absentOn(personId,date)?.state==='Autorizado'){
+        alert('Existe una ausencia autorizada ese día. Revisa o cancela el permiso antes de registrar horas realizadas.');return;
+      }
+      const other=workEntries(personId,date).filter(x=>x.id!==id);
+      if(other.some(x=>timeOverlap(x,entry))){notify('Los horarios del mismo día no pueden solaparse. Divide jornada normal y extra en tramos.');return;}
+      const timeToMinutes=t=>Number(t.slice(0,2))*60+Number(t.slice(3,5));
+      const prev=workEntries(personId,addDays(date,-1));
+      const nextDayEntries=workEntries(personId,addDays(date,1));
+      if(prev.some(x=>timeToMinutes(x.end)<=timeToMinutes(x.start)&&timeToMinutes(entry.start)<timeToMinutes(x.end)) ||
+         (timeToMinutes(end)<=timeToMinutes(start)&&nextDayEntries.some(x=>timeToMinutes(x.start)<timeToMinutes(end)))){
+        notify('El horario se solapa con el tramo del día anterior o siguiente.');return;
+      }
+      const next=[...other,entry].sort((a,b)=>a.start.localeCompare(b.start));
+      setWorkEntries(personId,date,next);resetWorkEntryForm();notify('✓ Horas guardadas en la ficha compartida');
+    });
+    $('workCancelEdit').addEventListener('click',resetWorkEntryForm);
+    document.addEventListener('click',e=>{
+      const workDay=e.target.closest('[data-work-day]');if(workDay){openCalendarDay(workDay.dataset.workDay,workDay.dataset.start);setCalendarDayMode('hours');return;}
+      if(!editingDay)return;
+      const edit=e.target.closest('[data-work-edit]');
+      if(edit){const entry=workEntries(editingDay.personId,editingDay.date).find(x=>x.id===edit.dataset.workEdit);if(!entry)return;
+        const f=$('calendarDayWorkForm');for(const key of ['entryId','start','end','kind','state','breakMinutes','notes'])f.elements[key].value=entry[key]??'';
+        $('workSaveButton').textContent='Guardar cambios';$('workCancelEdit').hidden=false;f.scrollIntoView({block:'nearest',behavior:'smooth'});return;
+      }
+      const del=e.target.closest('[data-work-delete]');if(del){
+        const entries=workEntries(editingDay.personId,editingDay.date);
+        if(!confirm('¿Eliminar el tramo horario seleccionado?'))return;
+        setWorkEntries(editingDay.personId,editingDay.date,entries.filter(x=>x.id!==del.dataset.workDelete));resetWorkEntryForm();notify('Tramo eliminado');
+      }
+    });
+    $('detailExportHours').addEventListener('click',()=>{
+      const p=personById(currentPersonId);if(!p)return;
+      const rows=[['matricula','fecha','inicio','fin','descanso_min','tipo','estado','horas','observaciones'],...shiftOverrides.filter(r=>r.personId===p.id&&r.date.startsWith(String(currentYear)+'-')).flatMap(r=>workEntries(p.id,r.date).map(e=>[p.employeeNo,r.date,e.start,e.end,e.breakMinutes,e.kind,e.state,(workMinutes(e)/60).toFixed(2),e.notes||'']))];
+      download('ALUMALSA_Horas_'+p.employeeNo+'_'+currentYear+'.csv',csv(rows),'text/csv;charset=utf-8');
+    });
+    $('exportHours').addEventListener('click',()=>{
+      const rows=[['matricula','nombre','fecha','inicio','fin','descanso_min','tipo','estado','horas','observaciones'],...shiftOverrides.flatMap(r=>workEntries(r.personId,r.date).map(e=>[personById(r.personId)?.employeeNo||r.personId,personById(r.personId)?fullName(personById(r.personId)):'',r.date,e.start,e.end,e.breakMinutes,e.kind,e.state,(workMinutes(e)/60).toFixed(2),e.notes||'']))];
+      download('ALUMALSA_Horas_'+today+'.csv',csv(rows),'text/csv;charset=utf-8');
     });
     // Interaction handlers
     document.addEventListener('click',e=>{
@@ -1150,7 +1329,7 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
           const no=row.matricula.trim(),pattern=(row.patron||'MAN').toUpperCase(),anchor=row.ancla||monday(today);
           if(!no||!row.nombre||!row.apellidos||!validISO(anchor)||!(pattern in PATTERNS))throw Error(`Fila ${n+2}: matrícula, nombre, patrón o fecha no válidos`);
           const existing=draft.find(x=>x.employeeNo.toLowerCase()===no.toLowerCase());
-          const obj={id:existing?.id||uid(),employeeNo:no,firstName:row.nombre,lastName:row.apellidos,team:row.equipo||'Otro',pattern,anchor:monday(anchor),active:!['0','false','no'].includes((row.activo||'1').toLowerCase())};
+          const obj={id:existing?.id||uid(),employeeNo:no,firstName:row.nombre,lastName:row.apellidos,team:row.equipo||'Otro',pattern,anchor:monday(anchor),active:!['0','false','no'].includes((row.activo||'1').toLowerCase()),regularHours:existing?.regularHours??8};
           if(existing){Object.assign(existing,obj);updated++;}else{draft.push(obj);created++;}
         }
         if(!confirm(`Importar ${created} nuevos y actualizar ${updated} empleados?`))return;
