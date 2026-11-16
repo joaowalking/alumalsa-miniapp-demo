@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#102722" />
   <meta name="description" content="ALUMALSA CONTROL · Aplicación multiusuario de prueba" />
-  <title>ALUMALSA CONTROL v0.6.3 · Multiusuario</title>
+  <title>ALUMALSA CONTROL v0.6.4 · Multiusuario</title>
   <script src="https://telegram.org/js/telegram-web-app.js?65"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
@@ -325,6 +325,28 @@
 .day i{font-size:9px}
 .cal-cell{min-width:35px}
 
+/* v0.6.4 · Materias primas */
+.inv-stats {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:11px 0}
+.inv-stats .mini-stat {margin:0;text-align:left;padding:14px}.inv-stats .mini-stat b{font-size:21px}
+.inv-filter-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.inv-stock-card {background:#fff;border:1px solid var(--line);border-radius:15px;margin:10px 0;padding:14px}
+.inv-stock-head,.inv-stock-line {display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.inv-stock-title {font-size:15px;font-weight:850}.inv-stock-kg{font-weight:850;font-size:17px;color:var(--green);white-space:nowrap}
+.inv-stock-meta {font-size:11px;color:var(--muted);margin:4px 0 11px}
+.inv-stock-line {padding:9px 0;border-top:1px solid var(--line);font-size:12px;align-items:center}
+.inv-stock-line button {border:0;background:#e8f4ec;color:#166e48;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:800;min-width:70px}
+.inv-stock-line strong{white-space:nowrap}
+.inv-stock-header {display:flex;justify-content:space-between;gap:9px;align-items:baseline}
+.inv-split-row {border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:#f9fbf9}
+.inv-split-row .form-row{align-items:end}.inv-split-row .field{margin-bottom:0}
+.inv-split-remove{background:#fff1f1;border:0;color:#a13737;border-radius:8px;padding:7px 11px;font-size:12px;margin-top:8px}
+.inv-history-list{display:grid;gap:9px;margin-top:12px}.inv-history-item{border-radius:13px;background:white;border:1px solid var(--line);padding:12px}
+.inv-history-top{display:flex;justify-content:space-between;align-items:center;gap:9px;font-weight:800;font-size:12px}.inv-history-top .plus{color:var(--green)}.inv-history-top .minus{color:#ad5d17}
+.inv-tag {font-size:10px;display:inline-block;border-radius:7px;padding:3px 7px;background:var(--green-soft);color:var(--green);margin-left:5px}
+.inv-filter-grid .field {margin-bottom:3px}
+@media(min-width:900px){.inv-stats {grid-template-columns:repeat(4,minmax(0,1fr))}.inv-filter-grid {grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:490px){.inv-filter-grid{grid-template-columns:1fr 1fr}.inv-stock-kg{font-size:15px}.inv-stats .mini-stat b{font-size:18px}}
+
 /* v0.6: Pantallas grandes y estado de conexión. */
 @media (min-width: 900px) {
   .shell { max-width: 1240px; width: calc(100vw - 250px); margin: 0 24px 0 226px; padding-bottom: 35px; }
@@ -363,11 +385,14 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
 
 @media(max-width:650px){.work-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.work-entry{flex-direction:column}.day-action-tabs{flex-wrap:wrap}.work-metric b{font-size:16px}}
 
+/* Six mobile tabs, five plus Almacén. */
+@media(max-width:899px){.bottom-nav{grid-template-columns:repeat(6,minmax(0,1fr));padding-left:5px;padding-right:5px}.bottom-nav .tab{font-size:9px;min-width:0}}
+
 </style>
 </head>
 <body>
   <div id="cloudGate" class="cloud-gate"><div class="cloud-card">
-    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.3</span></div>
+    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.4</span></div>
     <h1>Espacio de trabajo compartido</h1><p class="cloud-intro">Una misma información en PC, iPhone y otros móviles. Solo para datos ficticios o expresamente autorizados.</p>
     <div id="cloudSetup" class="cloud-step"><h2>1. Conectar base de datos</h2><p>Crea un proyecto gratis en Supabase. Introduce únicamente la URL pública del proyecto y su <b>publishable key</b> (o anon key). Nunca utilices la service_role/secret key.</p>
       <label>Project URL<input id="cloudUrl" type="url" inputmode="url" placeholder="https://xxxx.supabase.co" autocapitalize="off" autocomplete="off"></label>
@@ -392,7 +417,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <header class="hero">
       <div class="hero-top">
         <div class="brand"><span class="logo" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4v-4l6 4V5l6-2v18H3Z"/><path d="M7 18h.01M12 18h.01M17 18h.01"/></svg></span><div><div class="brand-name">ALUMALSA <b>CONTROL</b></div><div class="eyebrow">Centro de operaciones</div></div></div>
-        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.3</span>
+        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.4</span>
       </div>
       <div class="hero-heading"><button id="appBackBtn" type="button" class="app-back" aria-label="Volver a la pantalla anterior" hidden>← Volver</button><div><div class="hero-topline" id="heroDate">PANEL OPERATIVO</div><h1 id="heroTitle">Panel de producción</h1><p id="heroDesc">Registro y seguimiento de incidencias</p></div></div>
     </header>
@@ -421,6 +446,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
 
         <div class="section-head"><div><span class="mini-label">HERRAMIENTAS</span><h2>Acceso a módulos</h2></div></div>
         <div class="module-grid">
+          <button class="module" data-nav="inventory"><span class="module-icon mod-amber">▧</span><span><b>Materias primas</b><small>Coladas · stock · ubicaciones</small></span><span class="module-arrow">›</span></button>
           <button class="module" data-nav="ots"><span class="module-icon mod-blue">⇩</span><span><b>Órdenes de trabajo</b><small>Importación CSV · IFS</small></span><span class="module-arrow">›</span></button>
           <button class="module" data-nav="calendar"><span class="module-icon mod-purple">▦</span><span><b>Calendario</b><small>Turnos y permisos</small></span><span class="module-arrow">›</span></button>
           <button class="module" data-nav="holidays"><span class="module-icon mod-amber">◈</span><span><b>Festivos</b><small>Calendario laboral</small></span><span class="module-arrow">›</span></button>
@@ -429,7 +455,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
         <div class="section-head"><div><span class="mini-label">ACTIVIDAD</span><h2>Últimas incidencias</h2></div><button class="linkbtn" data-nav="history">Ver historial <span aria-hidden="true">→</span></button></div>
         <div id="recentList" class="record-list"></div>
         <div class="home-utilities"><button class="outlined" type="button" id="copySummary">⧉ Copiar resumen de avisos</button></div>
-        <div class="note demo-note"><strong>v0.6.3 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
+        <div class="note demo-note"><strong>v0.6.4 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
       </section>
       <section id="view-new" hidden>
         <div class="view-title">Registrar incidencia</div>
@@ -602,6 +628,82 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
   <p class="help">Un empleado no puede estar asignado a dos secciones o dos turnos el mismo día. Las vacaciones autorizadas bloquean la asignación; los días libres y cambios de turno requieren confirmación y generan una excepción manual.</p>
 </section>
 
+<section id="view-inventory" hidden>
+  <div class="section-actionbar"><div><div class="view-title">Materias primas</div><p class="hint">Inventario compartido por colada, aleación y ubicación física. Cantidades en kg.</p></div><button class="outlined" type="button" id="invRefresh">↻ Actualizar</button></div>
+  <div id="invNotice" class="warning-note" hidden></div>
+  <div class="inv-stats">
+    <div class="mini-stat"><b id="invMetalTotal">0 kg</b><span>Metal disponible</span></div>
+    <div class="mini-stat"><b id="invSandTotal">0 kg</b><span>Arena disponible</span></div>
+    <div class="mini-stat"><b id="invLotsCount">0</b><span>Coladas / lotes con stock</span></div>
+    <div class="mini-stat"><b id="invLocationsCount">0</b><span>Ubicaciones registradas</span></div>
+  </div>
+  <div class="segmented inv-tabs" role="tablist" aria-label="Apartados de inventario">
+    <button type="button" class="on" data-inv-tab="stock">Stock y coladas</button>
+    <button type="button" data-inv-tab="movement">Registrar movimiento</button>
+    <button type="button" data-inv-tab="history">Historial</button>
+    <button type="button" data-inv-tab="catalog">Catálogo</button>
+    <button type="button" data-inv-tab="import">Importar CSV</button>
+  </div>
+  <div id="inv-stock">
+    <div class="inv-filter-grid">
+      <label class="field"><span>Buscar colada o lote</span><input id="invSearchLot" type="search" placeholder="Ej. 215695" autocomplete="off"></label>
+      <label class="field"><span>Materia prima</span><select id="invStockMaterial"><option value="">Todas</option></select></label>
+      <label class="field"><span>Subtipo / aleación</span><select id="invStockVariant"><option value="">Todos</option></select></label>
+      <label class="field"><span>Ubicación</span><select id="invStockLocation"><option value="">Todas</option></select></label>
+    </div>
+    <div class="section-actionbar"><strong id="invStockCount">Existencias</strong><button class="outlined" id="invStockExport" type="button">Exportar stock CSV</button></div>
+    <div id="invStockList"></div>
+  </div>
+  <div id="inv-movement" hidden>
+    <div class="panel"><h2>Movimiento de almacén</h2>
+      <p>Las recepciones suman stock; los traslados cambian su ubicación sin cambiar el total de la colada.</p>
+      <form id="invMovementForm">
+        <label class="field"><span>Tipo de movimiento</span><select id="invMoveType" name="type"><option value="receipt">Recepción de materia prima</option><option value="transfer">Traslado entre ubicaciones</option><option value="consume">Consumo / salida</option><option value="adjust_in">Ajuste positivo</option><option value="adjust_out">Ajuste negativo</option></select></label>
+        <div class="form-row"><label class="field"><span>Materia prima</span><select id="invMoveMaterial" name="material" required></select></label><label class="field"><span>Aleación / subtipo</span><select id="invMoveVariant" name="variant" required></select></label></div>
+        <label class="field"><span>Colada / lote *</span><input id="invMoveLot" name="lot" required maxlength="80" placeholder="Ej. 215695" autocomplete="off"></label>
+        <div id="invReceiptFields">
+          <div class="section-actionbar"><strong>Distribuir recepción por ubicación</strong><button type="button" class="outlined" id="invAddSplit">+ Otra ubicación</button></div>
+          <div id="invSplitRows"></div>
+          <p class="help">Una colada puede recibirse en varias filas. Cada reparto genera un movimiento separado, guardados juntos en una transacción.</p>
+          <div class="form-row"><label class="field"><span>Proveedor</span><input name="supplier" maxlength="120"></label><label class="field"><span>Pedido</span><input name="purchase_order" maxlength="80"></label></div>
+          <label class="field"><span>Albarán</span><input name="delivery_note" maxlength="80"></label>
+        </div>
+        <div id="invOtherFields" hidden>
+          <label class="field"><span>Cantidad (kg)</span><input name="kg" id="invOtherKg" type="number" min="0.001" step="0.001" placeholder="500.000"></label>
+          <div class="form-row"><label class="field" id="invFromWrap"><span>Ubicación origen</span><select name="from" id="invMoveFrom"></select></label><label class="field" id="invToWrap"><span>Ubicación destino</span><select name="to" id="invMoveTo"></select></label></div>
+        </div>
+        <label class="field"><span>Referencia / motivo</span><input name="reference" maxlength="120" placeholder="Ej. albarán, movimiento interno"></label>
+        <label class="field"><span>Observaciones</span><textarea name="notes" maxlength="500" rows="2" placeholder="Sin información sensible"></textarea></label>
+        <button id="invSaveMovement" class="primary" type="submit">Guardar movimiento</button>
+      </form>
+    </div>
+  </div>
+  <div id="inv-history" hidden>
+    <div class="section-actionbar"><strong>Movimientos registrados</strong><button id="invHistoryExport" class="outlined" type="button">Exportar historial</button></div>
+    <input id="invHistorySearch" class="filter" type="search" placeholder="Filtrar por colada, ubicación, albarán…" />
+    <div id="invHistoryList" class="inv-history-list"></div>
+  </div>
+  <div id="inv-catalog" hidden>
+    <div id="invCatalogWarning" class="note">Antes de recepcionar, registra ubicaciones reales (filas, zona de almacenamiento, silos…). No se precargan ubicaciones ni cantidades ficticias.</div>
+    <div class="form-actions"><button id="invSeedBtn" class="outlined" type="button">Inicializar Arena y Metal</button></div>
+    <div class="panel"><h2>Añadir aleación o subtipo</h2>
+      <form id="invVariantForm"><div class="form-row"><label class="field"><span>Materia prima</span><select id="invVariantMaterial" required></select></label><label class="field"><span>Código</span><input name="code" maxlength="40" required placeholder="Ej. AS7G03"></label></div>
+        <label class="field"><span>Nombre descriptivo</span><input name="name" maxlength="100" required placeholder="Ej. AS7G03"></label><button class="primary" type="submit">Añadir subtipo</button></form>
+    </div>
+    <div class="panel"><h2>Añadir ubicación</h2><form id="invLocationForm"><div class="form-row"><label class="field"><span>Código interno</span><input name="code" maxlength="40" required placeholder="Ej. FILA-01"></label><label class="field"><span>Nombre visible</span><input name="name" maxlength="100" required placeholder="Ej. Fila 1 metal"></label></div><label class="field"><span>Zona (opcional)</span><input name="zone" maxlength="80" placeholder="Ej. Patio metal"></label><button type="submit" class="primary">Añadir ubicación</button></form></div>
+    <div class="panel"><h2>Catálogo actual</h2><div id="invCatalogList"></div></div>
+  </div>
+  <div id="inv-import" hidden>
+    <div class="panel"><h2>Importación de recepciones CSV</h2><p>Permite cargar recepciones con una colada repartida en distintas ubicaciones. Cada línea debe tener un <b>id_externo único y estable</b>, para evitar duplicados si importas el archivo de nuevo.</p>
+      <button id="invTemplate" type="button" class="outlined">Descargar plantilla CSV</button>
+      <div class="import-zone"><label class="field"><span>Archivo de recepciones (.csv)</span><input type="file" id="invImportFile" accept=".csv,text/csv" /></label></div>
+      <div id="invImportPreview" class="note">Sin archivo seleccionado.</div>
+      <button id="invImportConfirm" class="primary" type="button" disabled>Confirmar importación</button>
+      <p class="help">Las líneas de CSV <b>suman stock</b>, no sustituyen un inventario existente. Para importar una foto de existencias iniciales, primero hay que comprobar que ese stock no figure ya en la aplicación. No importar el mismo stock inicial como recepción dos veces.</p>
+    </div>
+  </div>
+</section>
+
 <section id="view-holidays" hidden>
   <div class="view-title">Calendario laboral</div>
   <p class="hint">Fines de semana automáticos y festivos configurables, incluyendo el calendario general de Aragón 2026.</p>
@@ -623,6 +725,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <button class="tab" data-nav="tasks"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7 12 3 3 6-7"/></svg></span><span>Tareas</span></button>
     <button class="tab" data-nav="workforce"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11"/></svg></span><span>Puestos</span></button>
     <button class="tab" data-nav="personnel"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M18 8a3 3 0 0 1 0 6M19 20h2v-2a5 5 0 0 0-3-4.6"/></svg></span><span>Personal</span></button>
+    <button class="tab" data-nav="inventory"><span class="ico" aria-hidden="true">▤</span><span>Almacén</span></button>
   </nav>
   <dialog id="calendarDayDialog" class="ac-modal" aria-labelledby="calendarDayTitle">
     <div class="ac-modal-head">
@@ -747,20 +850,20 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       list($('historyList'),records.filter(r=>matches(r,$('historySearch').value)).filter(r=>!$('historyStatus').value||r.status===$('historyStatus').value),'No hay incidencias para esos filtros.');
       if (typeof updateDashboardV04 === 'function') updateDashboardV04();
     }
-    const allowedViews=['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays'];
+    const allowedViews=['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays','inventory'];
     // Navegación sin salir de la Mini App. Conservamos el historial del navegador.
     if(!history.state?.acView) history.replaceState({...history.state,acView:'home'},'');
     function goto(view,options={}) {
       if (!allowedViews.includes(view)) return;
       if(view!==currentView&&!options.fromHistory) history.pushState({acView:view},'',location.href);
       currentView=view;
-      for (const id of ['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays']) $('view-'+id).hidden=id!==view;
+      for (const id of ['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays','inventory']) $('view-'+id).hidden=id!==view;
       document.querySelectorAll('.tab').forEach(t=>{ const active=t.dataset.nav===view; t.classList.toggle('active',active); active?t.setAttribute('aria-current','page'):t.removeAttribute('aria-current'); });
-      const headings={home:['Panel de producción','Registro y seguimiento de incidencias'],new:['Nueva incidencia','Registra un aviso en unos segundos'],pending:['Pendientes','Control de incidencias abiertas'],history:['Historial','Consulta y seguimiento de registros'],personnel:['Gestión de personal','Plantilla, vacaciones y permisos'],calendar:['Planificación','Turnos y disponibilidad'],tasks:['Tareas priorizadas','Cola de actuaciones independientes'],ots:['Órdenes de trabajo','Importación manual de CSV de IFS'],workforce:['Puestos por turno','Cobertura operativa por sección'],holidays:['Festivos','Calendario de empresa y excepciones']};
+      const headings={home:['Panel de producción','Registro y seguimiento de incidencias'],new:['Nueva incidencia','Registra un aviso en unos segundos'],pending:['Pendientes','Control de incidencias abiertas'],history:['Historial','Consulta y seguimiento de registros'],personnel:['Gestión de personal','Plantilla, vacaciones y permisos'],calendar:['Planificación','Turnos y disponibilidad'],tasks:['Tareas priorizadas','Cola de actuaciones independientes'],ots:['Órdenes de trabajo','Importación manual de CSV de IFS'],workforce:['Puestos por turno','Cobertura operativa por sección'],holidays:['Festivos','Calendario de empresa y excepciones'],inventory:['Materias primas','Coladas, recepción y stock por ubicación']};
       $('heroTitle').textContent=headings[view][0]; $('heroDesc').textContent=headings[view][1];
       $('appBackBtn').hidden=view==='home';
       if(typeof updatePersonalMenu==='function') updatePersonalMenu();
-      redraw(); if(typeof renderPersonnel==='function') renderPersonnel(); if(typeof renderV03==='function') renderV03(); window.scrollTo({top:0,behavior:'instant'});
+      redraw(); if(typeof renderPersonnel==='function') renderPersonnel(); if(typeof renderV03==='function') renderV03(); if(typeof renderInventory==='function')renderInventory(); window.scrollTo({top:0,behavior:'instant'});
     }
     function navigateBack(){
       const openDialog=document.querySelector('dialog[open]');
@@ -1574,7 +1677,212 @@ saveV03();
     redraw();
 
 
-/* v0.6.2 · Acceso multiusuario e identificación del perfil. */
+// ALUMALSA CONTROL v0.6.4 | Inventario por coladas, subtipo y ubicación.
+// Stock real: Supabase RPC + control transaccional SQL. Demo: localStorage, sin sincronización.
+const INV_KEY='alumalsa_inventory_demo_v064';
+const INV_MOVEMENT_LABELS={receipt:'Recepción',transfer:'Traslado',consume:'Consumo',adjust_in:'Ajuste +',adjust_out:'Ajuste −'};
+const INV_HEADERS=['id_externo','materia','subtipo','colada','ubicacion','kg','proveedor','pedido','albaran','referencia','observaciones'];
+function invEmpty(){return {materials:[],variants:[],locations:[],lots:[],balances:[],movements:[]};}
+let invData=invEmpty(),invReady=false,invError='',invTab='stock',invImportRows=null,invBusy=false;
+const invId=()=>crypto.randomUUID();
+function invLocalLoad(){try{const x=JSON.parse(localStorage.getItem(INV_KEY));if(x&&['materials','variants','locations','lots','balances','movements'].every(k=>Array.isArray(x[k])))return x;}catch(_e){}return invEmpty();}
+function invLocalSave(){try{localStorage.setItem(INV_KEY,JSON.stringify(invData));}catch(e){notify('No se pudo guardar el inventario local');}}
+function invLocalSeed(){
+  const makeMat=(code,name)=>{let m=invData.materials.find(x=>x.code===code);if(!m){m={id:invId(),code,name,unit:'kg'};invData.materials.push(m);}return m;};
+  const metal=makeMat('METAL','Metal'),arena=makeMat('ARENA','Arena');
+  for(const code of ['AS7G','AS7G03','AS5U3G','AS9U3G','AS10G']){
+    if(!invData.variants.some(v=>v.material_id===metal.id&&v.code===code))invData.variants.push({id:invId(),material_id:metal.id,code,name:code,active:true});
+  }
+  if(!invData.variants.some(v=>v.material_id===arena.id&&v.code==='GENERAL'))invData.variants.push({id:invId(),material_id:arena.id,code:'GENERAL',name:'Arena (sin tipo especificado)',active:true});
+  invLocalSave();invReady=true;
+}
+function invStartDemo(){invData=invLocalLoad();invLocalSeed();invError='';renderInventory();}
+function invReset(){invReady=false;invData=invEmpty();invError='';renderInventory();}
+function invContext(){return typeof window.alumalsaInventoryContext==='function'?window.alumalsaInventoryContext():null;}
+function invAdmin(){return !cloudActive||invContext()?.role==='admin';}
+function invKg(n){return Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:3})+' kg';}
+function invDecimal(s){let x=String(s||'').trim().replace(/\s/g,'');if(x.includes(',')&&x.includes('.'))x=x.replace(/\./g,'').replace(',','.');else if(x.includes(','))x=x.replace(',','.');const n=Number(x);if(!Number.isFinite(n)||n<=0||n>999999999||Math.round(n*1000)/1000!==n)throw Error('Cantidad inválida: '+s+' (máximo 3 decimales)');return n;}
+function invTrim(x){return String(x??'').trim();}
+function invUpper(x){return invTrim(x).toUpperCase();}
+function invVariant(id){return invData.variants.find(x=>x.id===id);}
+function invMaterial(id){return invData.materials.find(x=>x.id===id);}
+function invLocation(id){return invData.locations.find(x=>x.id===id);}
+function invLot(id){return invData.lots.find(x=>x.id===id);}
+function invLocationLabel(id){const loc=invLocation(id);return loc?loc.code+' · '+loc.name:'—';}
+function invVariantLabel(id){const v=invVariant(id);return v?v.code:'—';}
+function invBalances(){return invData.balances.filter(x=>Number(x.kg)>0.000001);}
+async function invRemoteLoad(){
+  if(!cloudActive)return;
+  const ctx=invContext();if(!ctx?.db||!ctx.workspace)return;
+  try{
+    const map=[['materials','inv_materials'],['variants','inv_variants'],['locations','inv_locations'],['lots','inv_lots'],['balances','inv_balances'],['movements','inv_movements']];
+    const next=invEmpty();
+    for(const [key,table] of map){let rows=[],from=0;do{
+      const query=ctx.db.from(table).select('*').eq('workspace_id',ctx.workspace).range(from,from+999);
+      const {data,error}=await query;if(error)throw error;
+      rows.push(...(data||[]));if((data||[]).length<1000)break;from+=1000;
+      if(from>=30000)throw Error('Inventario de más de 30.000 filas; se necesita paginación en el servidor.');
+    }while(true);next[key]=rows;}
+    invData=next;invError='';invReady=true;renderInventory();
+  }catch(e){invError='Inventario no disponible: '+(e?.message||e)+'. Instala 02_materias_primas.sql en Supabase si aún no lo has ejecutado.';invReady=false;renderInventory();}
+}
+window.inventoryRemoteLoad=invRemoteLoad;
+function invSelect(id,items,placeholder='Seleccionar…',selected=null,allowBlank=true){
+  const el=$(id),before=selected??el.value;
+  el.innerHTML=(allowBlank?`<option value="">${escapeHTML(placeholder)}</option>`:'')+items.map(x=>`<option value="${escapeHTML(x.id)}">${escapeHTML(x.label)}</option>`).join('');
+  if(items.some(x=>x.id===before))el.value=before;else if(!allowBlank&&items.length)el.value=items[0].id;
+}
+function invOptions(){
+  const mats=invData.materials.map(m=>({id:m.id,label:m.name}));
+  for(const id of ['invMoveMaterial','invVariantMaterial'])invSelect(id,mats,'Materia prima',null,false);
+  invSelect('invStockMaterial',mats,'Todas');
+  const sm=$('invStockMaterial').value;invSelect('invStockVariant',invData.variants.filter(v=>!sm||v.material_id===sm).map(v=>({id:v.id,label:v.code+' · '+v.name})),'Todos');
+  const mm=$('invMoveMaterial').value;invSelect('invMoveVariant',invData.variants.filter(v=>v.material_id===mm).map(v=>({id:v.id,label:v.code+' · '+v.name})),'Subtipo / aleación',null,false);
+  const locs=invData.locations.map(l=>({id:l.id,label:l.code+' · '+l.name}));
+  invSelect('invStockLocation',locs,'Todas');
+  for(const id of ['invMoveFrom','invMoveTo'])invSelect(id,locs,'Ubicación',null,false);
+  invSplitOptions();
+}
+function invSplitOptions(){const options=invData.locations.map(l=>`<option value="${escapeHTML(l.id)}">${escapeHTML(l.code+' · '+l.name)}</option>`).join('');
+  for(const select of document.querySelectorAll('#invSplitRows select')){const prev=select.value;select.innerHTML=options;if(invData.locations.some(x=>x.id===prev))select.value=prev;}
+}
+function invSetTab(tab){invTab=tab;for(const t of ['stock','movement','history','catalog','import'])$('inv-'+t).hidden=t!==tab;
+ document.querySelectorAll('[data-inv-tab]').forEach(b=>b.classList.toggle('on',b.dataset.invTab===tab));renderInventory();}
+function invRowAdd(loc='',kg=''){const row=document.createElement('div');row.className='inv-split-row';row.innerHTML=`<div class="form-row"><label class="field"><span>Ubicación</span><select class="inv-split-location" required></select></label><label class="field"><span>Peso en kg</span><input class="inv-split-kg" type="number" min="0.001" step="0.001" value="${escapeHTML(kg)}" required placeholder="Ej. 500"></label></div><button type="button" class="inv-split-remove">Quitar reparto</button>`;
+ $('invSplitRows').appendChild(row);invSplitOptions();if(loc&&invData.locations.some(x=>x.id===loc))row.querySelector('select').value=loc;
+ row.querySelector('.inv-split-remove').addEventListener('click',()=>{if($('invSplitRows').children.length<=1){notify('Debe quedar al menos una ubicación');return;}row.remove();});}
+function invUpdateType(){const type=$('invMoveType').value,rec=type==='receipt';$('invReceiptFields').hidden=!rec;$('invOtherFields').hidden=rec;
+ $('invFromWrap').hidden=!['transfer','consume','adjust_out'].includes(type);$('invToWrap').hidden=!['transfer','adjust_in'].includes(type);
+ $('invOtherKg').required=!rec;
+ if(rec&&!$('invSplitRows').children.length)invRowAdd();}
+function invOverview(){const b=invBalances();let metal=0,sand=0;
+ for(const r of b){const lot=invLot(r.lot_id),variant=invVariant(lot?.variant_id),m=invMaterial(variant?.material_id);if(m?.code==='METAL')metal+=Number(r.kg);if(m?.code==='ARENA')sand+=Number(r.kg);}
+ $('invMetalTotal').textContent=invKg(metal);$('invSandTotal').textContent=invKg(sand);
+ $('invLotsCount').textContent=new Set(b.map(x=>x.lot_id)).size;$('invLocationsCount').textContent=invData.locations.length;
+}
+function invStockFiltered(){const q=invUpper($('invSearchLot').value),mat=$('invStockMaterial').value,variant=$('invStockVariant').value,loc=$('invStockLocation').value;
+ const groups=new Map();for(const b of invBalances()){
+  const lot=invLot(b.lot_id),v=invVariant(lot?.variant_id);if(!lot||!v|| (mat&&v.material_id!==mat)||(variant&&v.id!==variant)||(loc&&b.location_id!==loc))continue;
+  if(q&&!([lot.lot_code,v.code,invMaterial(v.material_id)?.name,invLocation(b.location_id)?.code].join(' ').toUpperCase().includes(q)))continue;
+  const k=lot.id;if(!groups.has(k))groups.set(k,{lot,variant:v,material:invMaterial(v.material_id),rows:[],kg:0});
+  const g=groups.get(k);g.rows.push(b);g.kg+=Number(b.kg);
+ }
+ return [...groups.values()].sort((a,b)=>a.material?.code===b.material?.code?a.variant.code.localeCompare(b.variant.code)||a.lot.lot_code.localeCompare(b.lot.lot_code):String(a.material?.name).localeCompare(String(b.material?.name)));
+}
+function invRenderStock(){const groups=invStockFiltered();$('invStockCount').textContent=groups.length+' coladas / lotes';
+ $('invStockList').innerHTML=groups.length?groups.map(g=>`<article class="inv-stock-card"><div class="inv-stock-header"><div><div class="inv-stock-title">${escapeHTML(g.lot.lot_code)} <span class="inv-tag">${escapeHTML(g.variant.code)}</span></div><div class="inv-stock-meta">${escapeHTML(g.material?.name||'Materia')} · ${g.rows.length} ubicaciones con stock</div></div><div class="inv-stock-kg">${invKg(g.kg)}</div></div>${g.rows.sort((a,b)=>invLocationLabel(a.location_id).localeCompare(invLocationLabel(b.location_id))).map(b=>`<div class="inv-stock-line"><span>📍 ${escapeHTML(invLocationLabel(b.location_id))}</span><strong>${invKg(b.kg)}</strong><button data-inv-transfer="${escapeHTML(g.lot.id)}" data-inv-location="${escapeHTML(b.location_id)}">Mover</button></div>`).join('')}</article>`).join(''):'<div class="empty-note">Sin stock para esta búsqueda. Puedes crear una ubicación y registrar una recepción.</div>';
+}
+function invRenderHistory(){const query=invUpper($('invHistorySearch').value),rows=[...invData.movements].sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+ const list=rows.filter(m=>{const l=invLot(m.lot_id);return !query||[l?.lot_code,invVariantLabel(l?.variant_id),invLocationLabel(m.from_location),invLocationLabel(m.to_location),m.delivery_note,m.supplier,m.reference].join(' ').toUpperCase().includes(query);});
+ $('invHistoryList').innerHTML=list.length?list.slice(0,150).map(m=>{const l=invLot(m.lot_id),neg=['consume','adjust_out'].includes(m.movement_type);return `<article class="inv-history-item"><div class="inv-history-top"><span>${escapeHTML(INV_MOVEMENT_LABELS[m.movement_type]||m.movement_type)} · ${escapeHTML(l?.lot_code||'Sin lote')} <span class="inv-tag">${escapeHTML(invVariantLabel(l?.variant_id))}</span></span><span class="${neg?'minus':'plus'}">${neg?'−':'+'}${invKg(m.kg)}</span></div><div class="inv-stock-meta">${escapeHTML(invLocationLabel(m.from_location))} ${m.from_location&&m.to_location?'→':''} ${escapeHTML(invLocationLabel(m.to_location))} · ${escapeHTML(new Date(m.created_at).toLocaleString('es-ES'))}</div><div class="inv-stock-meta">${escapeHTML([m.supplier&&'Proveedor '+m.supplier,m.delivery_note&&'Albarán '+m.delivery_note,m.purchase_order&&'Pedido '+m.purchase_order,m.reference&&'Referencia '+m.reference,m.notes].filter(Boolean).join(' · '))}</div></article>`;}).join(''):'<div class="empty-note">No hay movimientos que coincidan.</div>';
+}
+function invRenderCatalog(){const can=invAdmin();$('invSeedBtn').hidden=!can;$('invVariantForm').hidden=!can;$('invLocationForm').hidden=!can;
+ $('invCatalogList').innerHTML=`<h3>Materias y subtipos</h3>${invData.materials.map(m=>`<div class="inv-stock-line"><span><strong>${escapeHTML(m.name)}</strong><br>${escapeHTML(invData.variants.filter(v=>v.material_id===m.id).map(v=>v.code).join(' · ')||'Sin subtipos')}</span></div>`).join('')}<h3>Ubicaciones</h3>${invData.locations.map(l=>`<div class="inv-stock-line"><span><strong>${escapeHTML(l.code)}</strong> · ${escapeHTML(l.name)} <small>${escapeHTML(l.zone||'')}</small></span></div>`).join('')||'<div class="empty-note">Todavía no has registrado ubicaciones.</div>'}`;
+}
+function renderInventory(){if(currentView!=='inventory')return;
+ $('invNotice').hidden=!invError;$('invNotice').textContent=invError||'';
+ if(!invReady){$('invStockList').innerHTML='<div class="empty-note">Inventario no disponible. Abre Catálogo para comprobar el esquema.</div>';return;}
+ invOptions();invOverview();invUpdateType();invRenderStock();invRenderHistory();invRenderCatalog();
+}
+function invLocalUpsertBalance(lotId,locId,delta){let b=invData.balances.find(x=>x.lot_id===lotId&&x.location_id===locId);if(!b){b={workspace_id:'demo',lot_id:lotId,location_id:locId,kg:0};invData.balances.push(b);}const next=Math.round((Number(b.kg)+delta)*1000)/1000;if(next < -0.000001)throw Error('Stock insuficiente en la ubicación de origen (disponible '+invKg(b.kg)+')');b.kg=next;}
+function invLocalPost({variant,lot,type,kg,from=null,to=null,supplier='',purchase_order='',delivery_note='',reference='',notes='',operation_id}){
+ const existing=invData.movements.find(m=>m.operation_id===operation_id);if(existing)return existing.id;
+ if(!invVariant(variant))throw Error('Subtipo inexistente');if((from&&!invLocation(from))||(to&&!invLocation(to))||(!from&&!to))throw Error('Ubicación no encontrada');
+ if(from&&(!invLocation(from)||Number(invData.balances.find(b=>b.lot_id===invData.lots.find(l=>l.variant_id===variant&&l.lot_code===lot)?.id&&b.location_id===from)?.kg||0)<kg))throw Error('No hay stock suficiente en origen');
+ let l=invData.lots.find(x=>x.variant_id===variant&&x.lot_code===lot);if(!l){if(!['receipt','adjust_in'].includes(type))throw Error('La colada no está registrada');l={id:invId(),variant_id:variant,lot_code:lot};invData.lots.push(l);}
+ if(from)invLocalUpsertBalance(l.id,from,-kg);if(to)invLocalUpsertBalance(l.id,to,kg);
+ const m={id:invId(),lot_id:l.id,movement_type:type,kg,from_location:from,to_location:to,supplier,purchase_order,delivery_note,reference,notes,created_at:new Date().toISOString(),operation_id};invData.movements.push(m);invLocalSave();return m.id;
+}
+async function invPost(type,fields,lines=null){
+ if(!invReady)throw Error('El inventario aún no está preparado');if(!navigator.onLine&&cloudActive)throw Error('Sin conexión. No se ha registrado ningún movimiento.');
+ if(!cloudActive){const snapshot=structuredClone(invData);try{
+  if(type==='receipt')lines.forEach(row=>invLocalPost({...fields,type,kg:row.kg,to:row.location_id,operation_id:row.operation_id||invId()}));
+  else invLocalPost({...fields,type});
+ }catch(e){invData=snapshot;invLocalSave();throw e;}
+ }else{
+  const {db,workspace}=invContext();if(type==='receipt'){
+   const {error}=await db.rpc('inv_receive_split',{p_workspace:workspace,p_variant:fields.variant,p_lot_code:fields.lot,p_lines:lines,p_supplier:fields.supplier,p_purchase_order:fields.purchase_order,p_delivery_note:fields.delivery_note,p_reference:fields.reference,p_notes:fields.notes,p_batch_id:fields.operation_id});if(error)throw error;
+  }else{
+   const {error}=await db.rpc('inv_post_movement',{p_workspace:workspace,p_variant:fields.variant,p_lot_code:fields.lot,p_type:type,p_kg:fields.kg,p_from:fields.from,p_to:fields.to,p_reference:fields.reference,p_notes:fields.notes,p_operation_id:fields.operation_id});if(error)throw error;
+  }
+  await invRemoteLoad();
+ }
+ renderInventory();
+}
+function invMovementFields(form){const type=$('invMoveType').value,variant=$('invMoveVariant').value,lot=invUpper(form.elements.lot.value),from=form.elements.from.value||null,to=form.elements.to.value||null;
+ if(!variant)throw Error('Selecciona aleación / subtipo');if(!lot)throw Error('Indica número de colada o lote');
+ const fields={variant,lot,reference:invTrim(form.elements.reference.value),notes:invTrim(form.elements.notes.value),operation_id:invId()};
+ if(type==='receipt'){
+   fields.supplier=invTrim(form.elements.supplier.value);fields.purchase_order=invTrim(form.elements.purchase_order.value);fields.delivery_note=invTrim(form.elements.delivery_note.value);
+   const lines=[...$('invSplitRows').children].map(r=>({location_id:r.querySelector('select').value,kg:invDecimal(r.querySelector('input').value)}));
+   if(lines.some(x=>!x.location_id))throw Error('Todas las líneas deben tener una ubicación');return {type,fields,lines};
+ }
+ fields.kg=invDecimal(form.elements.kg.value);fields.from=['transfer','consume','adjust_out'].includes(type)?from:null;fields.to=['transfer','adjust_in'].includes(type)?to:null;
+ if((['transfer','consume','adjust_out'].includes(type)&&!fields.from)||(['transfer','adjust_in'].includes(type)&&!fields.to))throw Error('Selecciona las ubicaciones necesarias');if(fields.from&&fields.to&&fields.from===fields.to)throw Error('Origen y destino deben ser diferentes');
+ if(['adjust_in','adjust_out'].includes(type)&&!fields.reference&&!fields.notes)throw Error('Indica el motivo del ajuste');
+ return {type,fields,lines:null};
+}
+function invSetMovementFromLot(lotId,locationId){const l=invLot(lotId),v=invVariant(l?.variant_id);if(!l||!v)return;
+ invSetTab('movement');$('invMoveType').value='transfer';$('invMoveMaterial').value=v.material_id;invOptions();$('invMoveVariant').value=v.id;$('invMoveLot').value=l.lot_code;$('invMoveFrom').value=locationId;invUpdateType();$('invMoveLot').scrollIntoView({behavior:'smooth'});
+}
+async function invRpc(fn,args){if(!cloudActive)throw Error('Conexión no disponible');const {db}=invContext();const {data,error}=await db.rpc(fn,args);if(error)throw error;return data;}
+async function invAddVariant(materialId,code,name){const mat=invMaterial(materialId);if(!mat)throw Error('Materia prima no encontrada');
+ if(cloudActive){await invRpc('inv_add_variant',{p_workspace:invContext().workspace,p_material_code:mat.code,p_code:code,p_name:name});await invRemoteLoad();}
+ else{if(invData.variants.some(x=>x.material_id===materialId&&x.code===code))throw Error('El subtipo ya existe');invData.variants.push({id:invId(),material_id:materialId,code,name,active:true});invLocalSave();}
+ renderInventory();}
+async function invAddLocation(code,name,zone){if(cloudActive){await invRpc('inv_add_location',{p_workspace:invContext().workspace,p_code:code,p_name:name,p_zone:zone});await invRemoteLoad();}
+ else{if(invData.locations.some(x=>x.code===code))throw Error('La ubicación ya existe');invData.locations.push({id:invId(),code,name,zone,active:true});invLocalSave();}renderInventory();}
+async function invSeed(){if(!invAdmin())throw Error('Solo el administrador puede preparar materias y ubicaciones');if(cloudActive){await invRpc('inv_seed',{p_workspace:invContext().workspace});await invRemoteLoad();}else invLocalSeed();renderInventory();}
+async function invUuidForExternal(external){const bytes=new TextEncoder().encode('ALUMALSA-INV-RECEIPT:'+external.trim().toUpperCase());const buf=await crypto.subtle.digest('SHA-256',bytes);const a=new Uint8Array(buf).slice(0,16);a[6]=(a[6]&15)|80;a[8]=(a[8]&63)|128;const h=[...a].map(x=>x.toString(16).padStart(2,'0')).join('');return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);}
+function invCSVTpl(){return csv([INV_HEADERS,['DEMO-REC-001','METAL','AS7G03','DEMO-215695','FILA-01','500','Proveedor de prueba','PED-DEMO','ALB-DEMO','Recepción de prueba','Ubicación 1'],['DEMO-REC-002','METAL','AS7G03','DEMO-215695','FILA-02','750','Proveedor de prueba','PED-DEMO','ALB-DEMO','Recepción de prueba','Ubicación 2']]);}
+async function invParseImport(file){if(!invReady)throw Error('Prepara el inventario antes de importar');const text=await file.text();const rows=detectCSV(text);if(rows.length<2)throw Error('El CSV no tiene registros');const actual=rows.shift().map(x=>x.toLowerCase());if(!INV_HEADERS.every(h=>actual.includes(h)))throw Error('Cabeceras incorrectas. Descarga la plantilla de recepciones.');
+ if(rows.length>3000)throw Error('Importa menos de 3.000 líneas por archivo');const seen=new Set(),all=[];
+ for(let i=0;i<rows.length;i++){const line=Object.fromEntries(INV_HEADERS.map(h=>[h,rows[i][actual.indexOf(h)]||'']));const no=i+2,id=invUpper(line.id_externo);if(!id||id.length>120)throw Error('Fila '+no+': id_externo requerido (máximo 120 caracteres)');if(seen.has(id))throw Error('ID externo duplicado en el CSV: '+id);seen.add(id);
+  const mat=invData.materials.find(m=>m.code===invUpper(line.materia));if(!mat)throw Error('Fila '+no+': materia prima no existe: '+line.materia);
+  const variant=invData.variants.find(v=>v.material_id===mat.id&&v.code===invUpper(line.subtipo));if(!variant)throw Error('Fila '+no+': aleación / subtipo no existe: '+line.subtipo);
+  const loc=invData.locations.find(l=>l.code===invUpper(line.ubicacion));if(!loc)throw Error('Fila '+no+': ubicación no existe: '+line.ubicacion);
+  const lot=invUpper(line.colada)||'SIN-LOTE',kg=invDecimal(line.kg);
+  all.push({variant_id:variant.id,lot_code:lot,location_id:loc.id,kg,supplier:line.proveedor,purchase_order:line.pedido,delivery_note:line.albaran,reference:line.referencia||id,notes:line.observaciones,operation_id:await invUuidForExternal(id)});
+ }
+ return all;
+}
+async function invImportAll(rows){
+ let created=0,duplicates=0;
+ if(cloudActive){const {db,workspace}=invContext();for(let i=0;i<rows.length;i+=100){const {data,error}=await db.rpc('inv_import_receipts',{p_workspace:workspace,p_rows:rows.slice(i,i+100)});if(error)throw Error(`No se pudo importar el bloque ${Math.floor(i/100)+1}: ${error.message}`);created+=Number(data?.created||0);duplicates+=Number(data?.duplicates||0);}await invRemoteLoad();}
+ else{const snapshot=structuredClone(invData);try{for(const row of rows){if(invData.movements.some(m=>m.operation_id===row.operation_id)){duplicates++;continue;}invLocalPost({variant:row.variant_id,lot:row.lot_code,type:'receipt',kg:row.kg,to:row.location_id,supplier:row.supplier,purchase_order:row.purchase_order,delivery_note:row.delivery_note,reference:row.reference,notes:row.notes,operation_id:row.operation_id});created++;}}catch(e){invData=snapshot;invLocalSave();throw e;}}
+ return {created,duplicates};
+}
+function invCSVStock(){const rows=[['materia','subtipo','colada','ubicacion','nombre_ubicacion','kg']];for(const b of invBalances()){const l=invLot(b.lot_id),v=invVariant(l?.variant_id),m=invMaterial(v?.material_id),loc=invLocation(b.location_id);rows.push([m?.code,v?.code,l?.lot_code,loc?.code,loc?.name,b.kg]);}return csv(rows);}
+function invCSVHistory(){const rows=[['fecha','tipo','materia','subtipo','colada','origen','destino','kg','proveedor','pedido','albaran','referencia','observaciones']];for(const x of invData.movements){const l=invLot(x.lot_id),v=invVariant(l?.variant_id),m=invMaterial(v?.material_id);rows.push([x.created_at,x.movement_type,m?.code,v?.code,l?.lot_code,invLocation(x.from_location)?.code,invLocation(x.to_location)?.code,x.kg,x.supplier,x.purchase_order,x.delivery_note,x.reference,x.notes]);}return csv(rows);}
+// Eventos de interfaz
+for(const b of document.querySelectorAll('[data-inv-tab]'))b.addEventListener('click',()=>invSetTab(b.dataset.invTab));
+$('invMoveType').addEventListener('change',invUpdateType);
+$('invMoveMaterial').addEventListener('change',()=>{invOptions();});
+$('invStockMaterial').addEventListener('change',()=>{invOptions();invRenderStock();});
+for(const id of ['invSearchLot','invStockVariant','invStockLocation'])$(id).addEventListener('input',invRenderStock);
+$('invHistorySearch').addEventListener('input',invRenderHistory);
+$('invAddSplit').addEventListener('click',()=>invRowAdd());
+$('invRefresh').addEventListener('click',async()=>{if(cloudActive)await invRemoteLoad();else invStartDemo();notify('Inventario actualizado');});
+$('invStockList').addEventListener('click',e=>{const b=e.target.closest('[data-inv-transfer]');if(b)invSetMovementFromLot(b.dataset.invTransfer,b.dataset.invLocation);});
+$('invMovementForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(invBusy)return;invBusy=true;const btn=$('invSaveMovement');btn.disabled=true;const f=e.target;
+ try{const {type,fields,lines}=invMovementFields(f);const amount=type==='receipt'?lines.reduce((s,r)=>s+r.kg,0):fields.kg;if(!confirm(`¿Registrar ${INV_MOVEMENT_LABELS[type].toLowerCase()} de ${invKg(amount)} para la colada ${fields.lot}?`))return;
+  await invPost(type,fields,lines);f.reset();$('invSplitRows').innerHTML='';invRowAdd();invUpdateType();notify('✓ Movimiento guardado');invSetTab('stock');
+ }catch(err){alert('No se guardó el movimiento: '+err.message);}finally{invBusy=false;btn.disabled=false;}
+});
+$('invSeedBtn').addEventListener('click',async()=>{try{await invSeed();notify('Catálogo preparado');}catch(e){alert(e.message);}});
+$('invVariantForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target;try{await invAddVariant($('invVariantMaterial').value,invUpper(f.elements.code.value),invTrim(f.elements.name.value));f.reset();notify('Subtipo añadido');}catch(err){alert(err.message);}});
+$('invLocationForm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target;try{await invAddLocation(invUpper(f.elements.code.value),invTrim(f.elements.name.value),invTrim(f.elements.zone.value));f.reset();notify('Ubicación añadida');}catch(err){alert(err.message);}});
+$('invStockExport').addEventListener('click',()=>download('ALUMALSA_stock_ubicaciones.csv',invCSVStock(),'text/csv;charset=utf-8'));
+$('invHistoryExport').addEventListener('click',()=>download('ALUMALSA_movimientos_materias.csv',invCSVHistory(),'text/csv;charset=utf-8'));
+$('invTemplate').addEventListener('click',()=>download('Plantilla_recepciones_materias.csv',invCSVTpl(),'text/csv;charset=utf-8'));
+$('invImportFile').addEventListener('change',async e=>{invImportRows=null;$('invImportConfirm').disabled=true;try{if(!e.target.files?.[0])return;const draft=await invParseImport(e.target.files[0]);invImportRows=draft;const kg=draft.reduce((s,r)=>s+r.kg,0);$('invImportPreview').textContent=`Vista previa: ${draft.length} líneas · ${invKg(kg)} · ${new Set(draft.map(x=>x.lot_code)).size} coladas/lotes. Cada línea sumará stock; confirma solo si son recepciones no contabilizadas.`;$('invImportConfirm').disabled=false;}catch(err){$('invImportPreview').textContent='Importación no válida: '+err.message;}});
+$('invImportConfirm').addEventListener('click',async()=>{if(invBusy||!invImportRows)return;if(!confirm('¿Confirmas que estas entradas no están contabilizadas en el inventario? La operación incrementará las existencias.'))return;invBusy=true;$('invImportConfirm').disabled=true;try{const r=await invImportAll(invImportRows);$('invImportPreview').textContent=`Importación completada: ${r.created} recepciones nuevas, ${r.duplicates} ya registradas (sin duplicar).`;invImportRows=null;notify('Importación completada');invSetTab('stock');}catch(err){alert('Importación interrumpida: '+err.message+'; consulta movimientos antes de reintentar. Los ID externos evitan duplicados en reimportaciones.');}finally{invBusy=false;}});
+
+window.inventoryReset=invReset;window.inventoryStartDemo=invStartDemo;
+
+
+/* v0.6.4 · Acceso multiusuario e inventario segregado por espacio. */
 (()=>{
 'use strict';
 const CONFIG_URL='ac_supabase_url_v05', CONFIG_KEY='ac_supabase_pub_v05', SPACE_KEY='ac_workspace_v05';
@@ -1590,6 +1898,7 @@ const KINDS=['incident','staff','absence','shift','task','ot','board','target','
 const STORAGE={incident:()=>records,staff:()=>staff,absence:()=>absences,shift:()=>shiftOverrides,task:()=>tasks,ot:()=>otRecords,board:()=>boardAssignments,holiday:()=>holidays,target:()=>Object.entries(boardTargets).map(([key,value])=>({key,value}))};
 const keysFor={incident:x=>x.id,staff:x=>x.id,absence:x=>x.id,shift:x=>x.personId+'@'+x.date,task:x=>x.id,ot:x=>x.id,board:x=>x.id,target:x=>x.key,holiday:x=>x.date};
 let db=null, user=null, workspace=null, workspaceName=null, role=null, server=new Map();
+window.alumalsaInventoryContext=()=>({db,user,workspace,role});
 window.alumalsaActor=()=>({updatedBy:user?.id||'local',updatedByLabel:displayName()});
 let writeQueue=Promise.resolve(), pendingCount=0, needRefresh=false, liveChannel=null, poller=null, refreshTimer=null;
 const el=id=>document.getElementById(id);
@@ -1635,7 +1944,7 @@ async function enterSpace(id){step('cloudLoading');try{
   const {data:spaceInfo}=await db.from('workspaces').select('name').eq('id',id).maybeSingle();
   workspaceName=spaceInfo?.name||'Espacio compartido';
   localStorage.setItem(SPACE_KEY,id);await fetchCloud(true);
-  setMode(true);status('● Conectado');refreshIdentity();
+  setMode(true);status('● Conectado');refreshIdentity();await window.inventoryRemoteLoad?.();
   el('cloudInvite').hidden=role!=='admin';el('cloudMigrate').hidden=role!=='admin';el('cloudSample').hidden=role!=='admin';
   redraw();renderPersonnel();renderV03();subscribe();
  }catch(e){setMode(false);step('cloudWorkspace');setError('No se pudo abrir el espacio: '+errorMessage(e));}
@@ -1648,7 +1957,7 @@ async function fetchCloud(initial=false){if(!db||!workspace)return;
  const grouped=Object.fromEntries(KINDS.map(k=>[k,[]]));for(const r of rows)if(grouped[r.kind])grouped[r.kind].push(clone(r.data));
  records=grouped.incident;staff=grouped.staff;absences=grouped.absence;shiftOverrides=grouped.shift;tasks=grouped.task;otRecords=grouped.ot;boardAssignments=grouped.board;holidays=grouped.holiday;
  boardTargets=Object.fromEntries(grouped.target.map(x=>[x.key,x.value]));
- if(!initial){redraw();renderPersonnel();renderV03();}
+ if(!initial){await window.inventoryRemoteLoad?.();redraw();renderPersonnel();renderV03();}
  status('● Sincronizado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}));
 }
 function expected(kinds){const snapshots={};for(const kind of kinds)snapshots[kind]=clone(STORAGE[kind]());return snapshots;}
@@ -1683,11 +1992,11 @@ window.cloudSubmit=function(kinds){if(!cloudActive)return;
 };
 function scheduleRefresh(){if(!cloudActive)return;needRefresh=true;clearTimeout(refreshTimer);refreshTimer=setTimeout(async()=>{if(!pendingCount&&needRefresh){try{await fetchCloud();needRefresh=false;}catch(e){status('⚠ Sin conexión');}}},900);}
 function subscribe(){if(liveChannel){db.removeChannel(liveChannel);liveChannel=null;}
- liveChannel=db.channel('alumalsa-docs-'+workspace).on('postgres_changes',{event:'*',schema:'public',table:'documents',filter:'workspace_id=eq.'+workspace},()=>scheduleRefresh()).subscribe();
+ liveChannel=db.channel('alumalsa-docs-'+workspace).on('postgres_changes',{event:'*',schema:'public',table:'documents',filter:'workspace_id=eq.'+workspace},()=>scheduleRefresh()).on('postgres_changes',{event:'INSERT',schema:'public',table:'inv_movements',filter:'workspace_id=eq.'+workspace},()=>scheduleRefresh()).subscribe();
  clearInterval(poller);poller=setInterval(()=>{if(cloudActive&&!pendingCount)scheduleRefresh();},20000);
 }
 async function disconnect(){setMode(false);clearInterval(poller);clearTimeout(refreshTimer);if(liveChannel){await db.removeChannel(liveChannel);liveChannel=null;}
- await db.auth.signOut();user=null;workspace=null;workspaceName=null;role=null;el('cloudIdentity').textContent='';server=new Map();localStorage.removeItem(SPACE_KEY);records=[];staff=[];absences=[];shiftOverrides=[];tasks=[];otRecords=[];boardAssignments=[];boardTargets={};holidays=[];step('cloudLogin');}
+ await db.auth.signOut();user=null;workspace=null;workspaceName=null;role=null;el('cloudIdentity').textContent='';server=new Map();localStorage.removeItem(SPACE_KEY);records=[];staff=[];absences=[];shiftOverrides=[];tasks=[];otRecords=[];boardAssignments=[];boardTargets={};holidays=[];window.inventoryReset?.();step('cloudLogin');}
 function displayName(){return user?.user_metadata?.display_name?.trim()||user?.email?.split('@')[0]||'Usuario';}
 function refreshIdentity(){
   const identity=el('cloudIdentity');
@@ -1724,7 +2033,7 @@ function enterLocalDemo(){
   document.body.classList.add('cloud-ready','is-demo');
   status('● DEMO LOCAL · datos solo en este navegador');
   el('cloudExit').textContent='Conectar online';
-  redraw();renderPersonnel();renderV03();
+  window.inventoryStartDemo?.();redraw();renderPersonnel();renderV03();
 }
 guardButton('cloudDemo',async()=>enterLocalDemo());
 guardButton('cloudConnect',async()=>{
