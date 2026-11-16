@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#102722" />
   <meta name="description" content="ALUMALSA CONTROL · Aplicación multiusuario de prueba" />
-  <title>ALUMALSA CONTROL v0.6.1 · Multiusuario</title>
+  <title>ALUMALSA CONTROL v0.6.2 · Multiusuario</title>
   <script src="https://telegram.org/js/telegram-web-app.js?65"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
@@ -282,6 +282,33 @@
     @media(min-width:820px){.shell{max-width:1100px}.bottom-nav{max-width:900px;left:50%;transform:translateX(-50%);border:1px solid #e3ebe6;border-radius:16px 16px 0 0}.module-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:420px){.cloud-bar{align-items:flex-start;flex-direction:column}.cloud-bar-actions{width:100%}.cloud-bar button{flex:1}.cloud-card{padding:20px}}
 
+/* v0.6.2 · acceso y jornada */
+.app-back{align-self:flex-start;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:white;border-radius:10px;padding:9px 13px;min-height:38px;font-weight:700;cursor:pointer}
+.app-back:hover{background:rgba(255,255,255,.23)}
+.hero-heading{display:flex;align-items:flex-start;gap:18px}
+.profile-trigger{cursor:pointer;background:transparent;border:1px solid rgba(15,95,53,.15);border-radius:25px;padding:7px 11px;text-align:left;white-space:normal}
+.profile-trigger:hover{border-color:#08794b}
+.personal-menu{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-start;margin-bottom:17px}
+.personal-menu button{flex:0 1 auto;white-space:normal}
+.calendar-table td[data-person][data-day]{cursor:pointer;outline-offset:-3px}
+.calendar-table td[data-person][data-day]:hover,.calendar-table td[data-person][data-day]:focus-visible{outline:2px solid #11845d;filter:brightness(.95)}
+.ac-modal{width:min(580px,calc(100vw - 24px));max-height:min(86vh,800px);overflow-y:auto;border:0;border-radius:18px;box-shadow:0 24px 100px rgba(0,0,0,.27);padding:24px;background:#fff;color:#173527}
+.ac-modal::backdrop{background:rgba(5,23,15,.62)}
+.ac-modal-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:15px}
+.ac-modal-head h2{font-size:21px;margin:4px 0}
+.ac-modal-head p{margin:4px 0 0}
+.ac-modal-eyebrow{color:#14754f;font-size:11px;font-weight:800;letter-spacing:1px}
+.icon-close{border:1px solid #dbe9df;color:#17432f;border-radius:10px;background:#f6faf7;padding:7px 11px;min-height:38px;cursor:pointer}
+.day-current{padding:12px 14px;background:#f0f6f1;border-radius:12px;margin:12px 0}
+.day-action-tabs{display:flex;gap:7px;margin-bottom:18px}
+.day-action-tabs button{flex:1;padding:10px;min-height:43px}
+.ac-modal form .field{margin-bottom:14px}
+.ac-modal .primary{width:100%;min-height:45px}
+.ac-modal-footnote{border-top:1px solid #e5ece8;margin-top:18px;padding-top:12px}
+.danger-outline{color:#a62f33!important;border-color:#eac4c8!important;margin-top:10px;width:100%}
+@media(max-width:640px){.ac-modal{padding:17px;border-radius:14px}.hero-heading{flex-direction:column;gap:8px}.personal-menu{flex-wrap:nowrap;overflow-x:auto}.personal-menu button{flex:0 0 auto;font-size:12px}}
+.profile-trigger:empty{display:none}
+
 /* v0.6: Pantallas grandes y estado de conexión. */
 @media (min-width: 900px) {
   .shell { max-width: 1240px; width: calc(100vw - 250px); margin: 0 24px 0 226px; padding-bottom: 35px; }
@@ -322,7 +349,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
 </head>
 <body>
   <div id="cloudGate" class="cloud-gate"><div class="cloud-card">
-    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.1</span></div>
+    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.2</span></div>
     <h1>Espacio de trabajo compartido</h1><p class="cloud-intro">Una misma información en PC, iPhone y otros móviles. Solo para datos ficticios o expresamente autorizados.</p>
     <div id="cloudSetup" class="cloud-step"><h2>1. Conectar base de datos</h2><p>Crea un proyecto gratis en Supabase. Introduce únicamente la URL pública del proyecto y su <b>publishable key</b> (o anon key). Nunca utilices la service_role/secret key.</p>
       <label>Project URL<input id="cloudUrl" type="url" inputmode="url" placeholder="https://xxxx.supabase.co" autocapitalize="off" autocomplete="off"></label>
@@ -347,11 +374,11 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <header class="hero">
       <div class="hero-top">
         <div class="brand"><span class="logo" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4v-4l6 4V5l6-2v18H3Z"/><path d="M7 18h.01M12 18h.01M17 18h.01"/></svg></span><div><div class="brand-name">ALUMALSA <b>CONTROL</b></div><div class="eyebrow">Centro de operaciones</div></div></div>
-        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.1</span>
+        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.2</span>
       </div>
-      <div class="hero-heading"><div><div class="hero-topline" id="heroDate">PANEL OPERATIVO</div><h1 id="heroTitle">Panel de producción</h1><p id="heroDesc">Registro y seguimiento de incidencias</p></div></div>
+      <div class="hero-heading"><button id="appBackBtn" type="button" class="app-back" aria-label="Volver a la pantalla anterior" hidden>← Volver</button><div><div class="hero-topline" id="heroDate">PANEL OPERATIVO</div><h1 id="heroTitle">Panel de producción</h1><p id="heroDesc">Registro y seguimiento de incidencias</p></div></div>
     </header>
-    <div class="cloud-bar"><div class="cloud-bar-who"><span id="cloudStatus">◌ Conectando…</span><span id="cloudIdentity" class="cloud-identity" aria-label="Usuario conectado"></span></div><span class="cloud-bar-actions"><button type="button" id="cloudRefresh">↻ Actualizar</button><button type="button" id="cloudInvite">+ Invitar</button><button type="button" id="cloudMigrate">Importar local</button><button type="button" id="cloudSample">Datos demo</button><button type="button" id="cloudExit">Salir</button></span></div>
+    <div class="cloud-bar"><div class="cloud-bar-who"><span id="cloudStatus">◌ Conectando…</span><button type="button" id="cloudIdentity" class="cloud-identity profile-trigger" aria-label="Abrir perfil del usuario" title="Mi perfil"></button></div><span class="cloud-bar-actions"><button type="button" id="cloudRefresh">↻ Actualizar</button><button type="button" id="cloudInvite">+ Invitar</button><button type="button" id="cloudMigrate">Importar local</button><button type="button" id="cloudSample">Datos demo</button><button type="button" id="cloudExit">Salir</button></span></div>
     <main>
       <section id="view-home">
         <div class="home-eyebrow"><span id="dashboardDate">RESUMEN OPERATIVO</span><span class="today-marker"><span></span> Datos compartidos</span></div>
@@ -384,7 +411,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
         <div class="section-head"><div><span class="mini-label">ACTIVIDAD</span><h2>Últimas incidencias</h2></div><button class="linkbtn" data-nav="history">Ver historial <span aria-hidden="true">→</span></button></div>
         <div id="recentList" class="record-list"></div>
         <div class="home-utilities"><button class="outlined" type="button" id="copySummary">⧉ Copiar resumen de avisos</button></div>
-        <div class="note demo-note"><strong>v0.6.1 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
+        <div class="note demo-note"><strong>v0.6.2 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
       </section>
       <section id="view-new" hidden>
         <div class="view-title">Registrar incidencia</div>
@@ -414,10 +441,11 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
       <section id="view-personnel" hidden>
         <div class="view-title">Personal y permisos</div>
         <p class="hint">Plantilla, vacaciones, permisos y ficha anual · datos de demostración.</p>
-        <div class="segmented" id="personalTabs">
-          <button class="on" data-pers-tab="staff">Plantilla</button>
-          <button data-pers-tab="absences">Permisos y vacaciones</button>
-          <button data-pers-tab="files">Copias e importación</button>
+        <div class="segmented personal-menu" id="personalTabs" aria-label="Apartados de personal">
+          <button type="button" class="on" data-person-section="staff">Plantilla</button>
+          <button type="button" data-person-section="calendar">Calendario</button>
+          <button type="button" data-person-section="absences">Permisos y vacaciones</button>
+          <button type="button" data-person-section="files">Copias e importación</button>
         </div>
         <div id="personal-staff">
           <div id="staffListMode">
@@ -480,6 +508,12 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
         </div>
       </section>
       <section id="view-calendar" hidden>
+        <div class="segmented personal-menu" id="calendarPersonalTabs" aria-label="Apartados de personal">
+          <button type="button" data-person-section="staff">Plantilla</button>
+          <button type="button" class="on" data-person-section="calendar">Calendario</button>
+          <button type="button" data-person-section="absences">Permisos y vacaciones</button>
+          <button type="button" data-person-section="files">Copias e importación</button>
+        </div>
         <div class="view-title">Planificación del personal</div>
         <p class="hint">Consulta turnos, fines de semana, festivos y matriz mensual. Los turnos manuales permiten planificar excepciones.</p>
         <div class="segmented"><button class="on" data-cal-tab="daily">Disponibilidad diaria</button><button data-cal-tab="monthly">Cuadrante mensual</button></div>
@@ -490,7 +524,7 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
         <div id="calendar-monthly" hidden>
           <div class="section-actionbar"><strong>Calendario mensual</strong><div class="date-actions"><button id="monthPrev" type="button">‹</button><input type="month" id="calendarMonth"/><button id="monthNext" type="button">›</button></div></div>
           <div class="legend"><span><i class="swatch m"></i>M</span><span><i class="swatch t"></i>T</span><span><i class="swatch n"></i>N</span><span><i class="swatch v"></i>Vacaciones</span><span><i class="swatch p"></i>Permisos</span></div>
-          <p class="help">Desliza la tabla horizontalmente. Pulsa una celda para registrar un permiso o una excepción de turno.</p>
+          <p class="help">Desliza la tabla horizontalmente. Pulsa una celda para abrir la ficha del día: turno, vacaciones o permiso.</p>
           <div class="calendar-scroll"><table class="calendar-table" id="monthlyMatrix"></table></div>
           <div id="monthSummary" class="summary-bar"></div>
         </div>
@@ -571,6 +605,56 @@ body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
     <button class="tab" data-nav="workforce"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11"/></svg></span><span>Puestos</span></button>
     <button class="tab" data-nav="personnel"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M18 8a3 3 0 0 1 0 6M19 20h2v-2a5 5 0 0 0-3-4.6"/></svg></span><span>Personal</span></button>
   </nav>
+  <dialog id="calendarDayDialog" class="ac-modal" aria-labelledby="calendarDayTitle">
+    <div class="ac-modal-head">
+      <div><div class="ac-modal-eyebrow">GESTIÓN DE JORNADA</div><h2 id="calendarDayTitle">Editar día</h2><p id="calendarDayInfo" class="help"></p></div>
+      <button type="button" id="calendarDayClose" class="icon-close" aria-label="Cerrar ventana">✕</button>
+    </div>
+    <div class="day-current" id="calendarDayCurrent"></div>
+    <div class="segmented day-action-tabs" aria-label="Acción sobre la jornada">
+      <button type="button" class="on" data-day-mode="shift">Cambiar turno</button>
+      <button type="button" data-day-mode="absence">Permiso / vacaciones</button>
+    </div>
+    <form id="calendarDayShiftForm">
+      <label class="field"><span>Turno de este día</span><select name="code">
+        <option value="">Sin cambio · utilizar patrón</option>
+        <option value="M">M · Mañana</option><option value="T">T · Tarde</option>
+        <option value="N">N · Noche</option><option value="D">D · Descanso</option>
+        <option value="F">F · Fiesta</option>
+      </select></label>
+      <p class="help">El cambio se aplica solo a esta fecha. No modifica el patrón rotativo del trabajador.</p>
+      <button type="submit" class="primary">Guardar cambio de turno</button>
+    </form>
+    <form id="calendarDayAbsForm" hidden>
+      <label class="field"><span>Código</span><select name="code">
+        <option value="VAC">VAC · Vacaciones</option><option value="P10">P10</option>
+        <option value="P11">P11</option><option value="P12">P12</option>
+        <option value="P40">P40</option><option value="P41">P41</option>
+        <option value="P31">P31</option><option value="P50">P50</option>
+        <option value="P60">P60</option><option value="P61">P61</option>
+        <option value="BAJA">BAJA</option><option value="DESC">DESC</option>
+        <option value="OTRO">OTRO</option>
+      </select></label>
+      <div class="form-row"><label class="field"><span>Desde</span><input type="date" name="from" required /></label><label class="field"><span>Hasta</span><input type="date" name="to" required /></label></div>
+      <label class="field"><span>Estado</span><select name="state"><option>Solicitado</option><option>Autorizado</option><option>Denegado</option></select></label>
+      <label class="field"><span>Observaciones operativas</span><textarea name="notes" maxlength="400" placeholder="Evita introducir información médica o sensible"></textarea></label>
+      <div id="calendarDayAudit" class="help" hidden></div>
+      <button type="submit" class="primary">Guardar permiso / vacaciones</button>
+      <button type="button" id="calendarDayRemoveAbs" class="outlined danger-outline" hidden>Eliminar este permiso</button>
+    </form>
+    <p class="help ac-modal-footnote">Los cambios autorizados se guardan en el espacio compartido y se sincronizan con los demás usuarios.</p>
+  </dialog>
+  <dialog id="userProfileDialog" class="ac-modal" aria-labelledby="userProfileTitle">
+    <div class="ac-modal-head"><div><div class="ac-modal-eyebrow">MI CUENTA</div><h2 id="userProfileTitle">Perfil del usuario</h2></div><button type="button" id="userProfileClose" class="icon-close" aria-label="Cerrar perfil">✕</button></div>
+    <form id="userProfileForm">
+      <label class="field"><span>Nombre para mostrar</span><input name="displayName" maxlength="80" placeholder="Tu nombre" required></label>
+      <label class="field"><span>Correo electrónico</span><input name="email" disabled></label>
+      <label class="field"><span>Rol en el espacio</span><input name="role" disabled></label>
+      <label class="field"><span>Espacio de trabajo</span><input name="workspace" disabled></label>
+      <button type="submit" class="primary">Guardar nombre</button>
+      <p class="help">El nombre es informativo. Los permisos se determinan por el rol validado en Supabase.</p>
+    </form>
+  </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   
 <script>
@@ -622,15 +706,38 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       list($('historyList'),records.filter(r=>matches(r,$('historySearch').value)).filter(r=>!$('historyStatus').value||r.status===$('historyStatus').value),'No hay incidencias para esos filtros.');
       if (typeof updateDashboardV04 === 'function') updateDashboardV04();
     }
-    function goto(view) {
-      if (!['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays'].includes(view)) return;
+    const allowedViews=['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays'];
+    // Navegación sin salir de la Mini App. Conservamos el historial del navegador.
+    if(!history.state?.acView) history.replaceState({...history.state,acView:'home'},'');
+    function goto(view,options={}) {
+      if (!allowedViews.includes(view)) return;
+      if(view!==currentView&&!options.fromHistory) history.pushState({acView:view},'',location.href);
       currentView=view;
       for (const id of ['home','new','pending','history','personnel','calendar','tasks','ots','workforce','holidays']) $('view-'+id).hidden=id!==view;
       document.querySelectorAll('.tab').forEach(t=>{ const active=t.dataset.nav===view; t.classList.toggle('active',active); active?t.setAttribute('aria-current','page'):t.removeAttribute('aria-current'); });
       const headings={home:['Panel de producción','Registro y seguimiento de incidencias'],new:['Nueva incidencia','Registra un aviso en unos segundos'],pending:['Pendientes','Control de incidencias abiertas'],history:['Historial','Consulta y seguimiento de registros'],personnel:['Gestión de personal','Plantilla, vacaciones y permisos'],calendar:['Planificación','Turnos y disponibilidad'],tasks:['Tareas priorizadas','Cola de actuaciones independientes'],ots:['Órdenes de trabajo','Importación manual de CSV de IFS'],workforce:['Puestos por turno','Cobertura operativa por sección'],holidays:['Festivos','Calendario de empresa y excepciones']};
       $('heroTitle').textContent=headings[view][0]; $('heroDesc').textContent=headings[view][1];
+      $('appBackBtn').hidden=view==='home';
+      if(typeof updatePersonalMenu==='function') updatePersonalMenu();
       redraw(); if(typeof renderPersonnel==='function') renderPersonnel(); if(typeof renderV03==='function') renderV03(); window.scrollTo({top:0,behavior:'instant'});
     }
+    function navigateBack(){
+      const openDialog=document.querySelector('dialog[open]');
+      if(openDialog){openDialog.close();return;}
+      if(currentView==='personnel'){
+        if(!$('staffEditor').hidden || !$('staffDetail').hidden){closePersonPanels();return;}
+        if(!$('absenceEditor').hidden){closeAbsence();return;}
+        if(personalTab!=='staff'){activatePersonal('staff');return;}
+      }
+      if(currentView==='calendar' && !$('shiftExceptionPanel').hidden){$('shiftExceptionPanel').hidden=true;return;}
+      if(currentView==='home')return;
+      if(history.state?.acView && history.length>1)history.back();else goto('home',{fromHistory:true});
+    }
+    $('appBackBtn').addEventListener('click',navigateBack);
+    addEventListener('popstate',event=>{
+      const target=allowedViews.includes(event.state?.acView)?event.state.acView:'home';
+      goto(target,{fromHistory:true});
+    });
     function createNextId(area) {return `${area}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;}
     function formatRecord(r) { return `${r.id} · ${CATEGORIES[r.area]||r.area}\nEquipo: ${r.equipment||'—'}\nPrioridad: ${priorityText(r.priority)}\nDescripción: ${r.description}\nResponsable: ${r.assignee}\nTurno: ${r.shift}\nEstado: ${statusText(r.status)}\nFecha: ${dateText(r.created)}`; }
     async function copyText(text) { try { await navigator.clipboard.writeText(text); notify('✓ Texto copiado al portapapeles'); } catch (_e) { const area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.focus(); area.select(); try { document.execCommand('copy')?notify('✓ Texto copiado'):notify('No se pudo copiar el texto'); } catch (_er) { notify('No se pudo copiar el texto'); } area.remove(); } }
@@ -737,12 +844,23 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       const code=plannedShift(person,date);
       return {label:code||'—',css:code==='M'?'shiftM':code==='T'?'shiftT':code==='N'?'shiftN':code==='F'?'officialholiday':code==='D'?'offday':'',status:code==='F'?offName(date):code==='D'?'Fin de semana':'previsto',abs:null};
     }
-    function cellContent(person,date){const v=dayStatus(person,date);return `<td data-day="${date}" data-person="${escapeHTML(person.id)}" class="cal-cell ${v.css} ${shiftOverrides.some(x=>x.personId===person.id&&x.date===date)?'manual':''}" title="${escapeHTML(fullName(person))} · ${date} · ${escapeHTML(v.label)} ${escapeHTML(v.status)}">${escapeHTML(v.label)}</td>`;}
+    function cellContent(person,date){const v=dayStatus(person,date);return `<td tabindex="0" role="button" aria-label="Editar ${escapeHTML(fullName(person))} ${date}: ${escapeHTML(v.label)}" data-day="${date}" data-person="${escapeHTML(person.id)}" class="cal-cell ${v.css} ${shiftOverrides.some(x=>x.personId===person.id&&x.date===date)?'manual':''}" title="${escapeHTML(fullName(person))} · ${date} · ${escapeHTML(v.label)} ${escapeHTML(v.status)}">${escapeHTML(v.label)}</td>`;}
+    function updatePersonalMenu(){
+      const section=currentView==='calendar'?'calendar':personalTab;
+      document.querySelectorAll('[data-person-section]').forEach(b=>{
+        const active=b.dataset.personSection===section;
+        b.classList.toggle('on',active);b.setAttribute('aria-pressed',String(active));
+      });
+    }
     function activatePersonal(tab) {
+      if(!['staff','absences','files'].includes(tab))return;
       personalTab=tab;
       for(const id of ['staff','absences','files']) $('personal-'+id).hidden=id!==tab;
-      document.querySelectorAll('[data-pers-tab]').forEach(b=>b.classList.toggle('on',b.dataset.persTab===tab));
-      renderPersonnel();
+      updatePersonalMenu();renderPersonnel();
+    }
+    function openPersonalSection(section){
+      if(section==='calendar'){goto('calendar');activateCalendar('monthly');}
+      else if(['staff','absences','files'].includes(section)){goto('personnel');activatePersonal(section);}
     }
     function renderPersonnel(){
       if(currentView!=='personnel' && currentView!=='calendar' && currentView!=='home')return;
@@ -895,9 +1013,77 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       if(code)shiftOverrides.push({personId:id,date,code});
       savePeople();$('shiftExceptionPanel').hidden=true;renderCalendar();notify('✓ Turno actualizado');
     });
+    // Ventana de edición unificada del calendario (no cambia el patrón anual).
+    let editingDay=null,editingAbsId=null;
+    function actorStamp(){return {updatedAt:new Date().toISOString(),...(window.alumalsaActor?.()||{updatedBy:'local',updatedByLabel:'Demo local'})};}
+    function setCalendarDayMode(mode){
+      if(!editingDay)return;
+      $('calendarDayShiftForm').hidden=mode!=='shift';
+      $('calendarDayAbsForm').hidden=mode!=='absence';
+      document.querySelectorAll('[data-day-mode]').forEach(b=>{
+        b.classList.toggle('on',b.dataset.dayMode===mode);b.setAttribute('aria-pressed',String(b.dataset.dayMode===mode));
+      });
+    }
+    function openCalendarDay(personId,date){
+      const p=personById(personId);if(!p||!validISO(date))return;
+      editingDay={personId,date};
+      const current=dayStatus(p,date),override=shiftOverrides.find(x=>x.personId===personId&&x.date===date);
+      const isoTitle=fromISO(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      $('calendarDayTitle').textContent=fullName(p);
+      $('calendarDayInfo').textContent=`${p.employeeNo} · ${isoTitle}`;
+      $('calendarDayCurrent').textContent=`Turno previsto: ${plannedShift(p,date)||'Sin definir'} · Situación: ${current.label}${offDay(date)?' · '+offName(date):''}${override?' · Excepción manual':''}`;
+      const shiftForm=$('calendarDayShiftForm');shiftForm.reset();shiftForm.elements.code.value=override?.code||'';
+      const found=absences.find(a=>a.personId===personId&&a.from<=date&&a.to>=date&&a.state!=='Denegado');
+      editingAbsId=found?.id||null;
+      const absForm=$('calendarDayAbsForm');absForm.reset();
+      absForm.elements.code.value=found?.code||'VAC';absForm.elements.from.value=found?.from||date;
+      absForm.elements.to.value=found?.to||date;absForm.elements.state.value=found?.state||'Solicitado';
+      absForm.elements.notes.value=found?.notes||'';
+      $('calendarDayRemoveAbs').hidden=!found;
+      $('calendarDayAudit').hidden=!(found?.updatedByLabel||found?.updatedAt);
+      $('calendarDayAudit').textContent=found?.updatedAt?`Última modificación: ${found.updatedByLabel||'Usuario'} · ${new Date(found.updatedAt).toLocaleString('es-ES')}`:'';
+      setCalendarDayMode(found?'absence':'shift');
+      const dialog=$('calendarDayDialog');if(!dialog.open)dialog.showModal();
+    }
+    function closeCalendarDay(){if($('calendarDayDialog').open)$('calendarDayDialog').close();editingDay=null;editingAbsId=null;}
+    document.querySelectorAll('[data-day-mode]').forEach(b=>b.addEventListener('click',()=>setCalendarDayMode(b.dataset.dayMode)));
+    $('calendarDayClose').addEventListener('click',closeCalendarDay);
+    $('calendarDayDialog').addEventListener('click',e=>{if(e.target===$('calendarDayDialog'))closeCalendarDay();});
+    $('calendarDayDialog').addEventListener('close',()=>{editingDay=null;editingAbsId=null;});
+    $('calendarDayShiftForm').addEventListener('submit',e=>{
+      e.preventDefault();if(!editingDay)return;
+      const {personId,date}=editingDay,code=e.target.elements.code.value;
+      shiftOverrides=shiftOverrides.filter(x=>!(x.personId===personId&&x.date===date));
+      if(code)shiftOverrides.push({personId,date,code,...actorStamp()});
+      savePeople();closeCalendarDay();renderPersonnel();renderCalendar();notify('✓ Turno puntual guardado');
+    });
+    $('calendarDayAbsForm').addEventListener('submit',e=>{
+      e.preventDefault();if(!editingDay)return;
+      const f=e.target,{personId}=editingDay,id=editingAbsId||uid();
+      const from=f.elements.from.value,to=f.elements.to.value;
+      const a={id,personId,code:f.elements.code.value,from,to,state:f.elements.state.value,notes:f.elements.notes.value.trim(),...actorStamp()};
+      if(!ABS_CODES.includes(a.code)||!validISO(from)||!validISO(to)||to<from){notify('Comprueba código y fechas');return;}
+      if(absences.some(x=>x.id!==id&&x.personId===personId&&x.state!=='Denegado'&&a.state!=='Denegado'&&overlaps(x,a))){notify('Ya existe un permiso solapado');return;}
+      if(a.state==='Autorizado'){
+        const conflicting=boardAssignments.filter(x=>x.personId===personId&&x.date>=from&&x.date<=to);
+        if(conflicting.length){
+          if(!confirm(`Existen ${conflicting.length} asignaciones de puestos en estas fechas. ¿Quitarlas para autorizar el permiso?`))return;
+          boardAssignments=boardAssignments.filter(x=>!conflicting.some(c=>c.id===x.id));saveV03();
+        }
+      }
+      if(editingAbsId){const n=absences.findIndex(x=>x.id===editingAbsId);if(n<0){notify('No se encuentra el permiso original. Actualiza la aplicación.');return;}absences[n]=a;}
+      else absences.push(a);
+      savePeople();closeCalendarDay();renderPersonnel();renderCalendar();notify('✓ Permiso / vacaciones guardado');
+    });
+    $('calendarDayRemoveAbs').addEventListener('click',()=>{
+      if(!editingAbsId)return;
+      const a=absences.find(x=>x.id===editingAbsId);if(!a)return;
+      if(!confirm(`¿Eliminar el permiso ${a.code} completo del ${a.from} al ${a.to}?`))return;
+      absences=absences.filter(x=>x.id!==a.id);savePeople();closeCalendarDay();renderPersonnel();renderCalendar();notify('Permiso eliminado');
+    });
     // Interaction handlers
     document.addEventListener('click',e=>{
-      const tab=e.target.closest('[data-pers-tab]');if(tab){activatePersonal(tab.dataset.persTab);return;}
+      const tab=e.target.closest('[data-person-section]');if(tab){openPersonalSection(tab.dataset.personSection);return;}
       const ctab=e.target.closest('[data-cal-tab]');if(ctab){activateCalendar(ctab.dataset.calTab);return;}
       const detail=e.target.closest('[data-person-detail]');if(detail){goto('personnel');personDetails(detail.dataset.personDetail);return;}
       const edit=e.target.closest('[data-person-edit]');if(edit){goto('personnel');editPerson(edit.dataset.personEdit);return;}
@@ -905,10 +1091,11 @@ const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supaba
       const eAbs=e.target.closest('[data-abs-edit]');if(eAbs){openAbsence(eAbs.dataset.absEdit);return;}
       const del=e.target.closest('[data-abs-remove]');if(del){changeAbs(del.dataset.absRemove,'remove');return;}
       const app=e.target.closest('[data-abs-approve]');if(app){changeAbs(app.dataset.absApprove,'approve');return;}
-      const cell=e.target.closest('[data-date-action]');if(cell){selectedDayAction={id:cell.dataset.person,date:cell.dataset.dateAction};$('dayActionPanel').hidden=false;$('dayActionTitle').textContent='Acción · '+selectedDayAction.date;$('dayActionPanel').scrollIntoView({behavior:'smooth',block:'start'});return;}
-      const monthly=e.target.closest('td[data-day][data-person]');if(monthly){openException(monthly.dataset.person,monthly.dataset.day);return;}
-      const except=e.target.closest('[data-exception]');if(except){openException(except.dataset.exception,except.dataset.start);return;}
+      const cell=e.target.closest('[data-date-action]');if(cell){openCalendarDay(cell.dataset.person,cell.dataset.dateAction);return;}
+      const monthly=e.target.closest('td[data-day][data-person]');if(monthly){openCalendarDay(monthly.dataset.person,monthly.dataset.day);return;}
+      const except=e.target.closest('[data-exception]');if(except){openCalendarDay(except.dataset.exception,except.dataset.start);return;}
     });
+    document.addEventListener('keydown',e=>{const cell=e.target.closest('td[data-day][data-person]');if(cell&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openCalendarDay(cell.dataset.person,cell.dataset.day);}});
     $('newStaffBtn').addEventListener('click',newPerson);
     $('cancelStaffBtn').addEventListener('click',closePersonPanels);
     $('backStaffBtn').addEventListener('click',closePersonPanels);
@@ -1208,7 +1395,7 @@ saveV03();
     redraw();
 
 
-/* v0.6.1 · Enlace de invitación directo; conexión pública configurada en build. */
+/* v0.6.2 · Acceso multiusuario e identificación del perfil. */
 (()=>{
 'use strict';
 const CONFIG_URL='ac_supabase_url_v05', CONFIG_KEY='ac_supabase_pub_v05', SPACE_KEY='ac_workspace_v05';
@@ -1223,7 +1410,8 @@ function signupRedirectUrl(){const url=appPublicUrl();if(pendingInvite())url.sea
 const KINDS=['incident','staff','absence','shift','task','ot','board','target','holiday'];
 const STORAGE={incident:()=>records,staff:()=>staff,absence:()=>absences,shift:()=>shiftOverrides,task:()=>tasks,ot:()=>otRecords,board:()=>boardAssignments,holiday:()=>holidays,target:()=>Object.entries(boardTargets).map(([key,value])=>({key,value}))};
 const keysFor={incident:x=>x.id,staff:x=>x.id,absence:x=>x.id,shift:x=>x.personId+'@'+x.date,task:x=>x.id,ot:x=>x.id,board:x=>x.id,target:x=>x.key,holiday:x=>x.date};
-let db=null, user=null, workspace=null, role=null, server=new Map();
+let db=null, user=null, workspace=null, workspaceName=null, role=null, server=new Map();
+window.alumalsaActor=()=>({updatedBy:user?.id||'local',updatedByLabel:displayName()});
 let writeQueue=Promise.resolve(), pendingCount=0, needRefresh=false, liveChannel=null, poller=null, refreshTimer=null;
 const el=id=>document.getElementById(id);
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -1263,8 +1451,12 @@ async function showSpaces(){step('cloudLoading');setMode(false);
 }
 async function enterSpace(id){step('cloudLoading');try{
   const {data:m,error:me}=await db.from('memberships').select('role').eq('workspace_id',id).eq('user_id',user.id).single();if(me)throw me;
-  workspace=id;role=m.role;localStorage.setItem(SPACE_KEY,id);await fetchCloud(true);
-  setMode(true);status('● Conectado');el('cloudIdentity').textContent='👤 '+(user.email||'usuario')+' · '+(role==='admin'?'Administrador':'Editor');
+  workspace=id;role=m.role;
+  // El nombre del equipo solo es informativo; falla de manera segura si el usuario no puede leerlo.
+  const {data:spaceInfo}=await db.from('workspaces').select('name').eq('id',id).maybeSingle();
+  workspaceName=spaceInfo?.name||'Espacio compartido';
+  localStorage.setItem(SPACE_KEY,id);await fetchCloud(true);
+  setMode(true);status('● Conectado');refreshIdentity();
   el('cloudInvite').hidden=role!=='admin';el('cloudMigrate').hidden=role!=='admin';el('cloudSample').hidden=role!=='admin';
   redraw();renderPersonnel();renderV03();subscribe();
  }catch(e){setMode(false);step('cloudWorkspace');setError('No se pudo abrir el espacio: '+errorMessage(e));}
@@ -1316,7 +1508,36 @@ function subscribe(){if(liveChannel){db.removeChannel(liveChannel);liveChannel=n
  clearInterval(poller);poller=setInterval(()=>{if(cloudActive&&!pendingCount)scheduleRefresh();},20000);
 }
 async function disconnect(){setMode(false);clearInterval(poller);clearTimeout(refreshTimer);if(liveChannel){await db.removeChannel(liveChannel);liveChannel=null;}
- await db.auth.signOut();user=null;workspace=null;role=null;el('cloudIdentity').textContent='';server=new Map();localStorage.removeItem(SPACE_KEY);records=[];staff=[];absences=[];shiftOverrides=[];tasks=[];otRecords=[];boardAssignments=[];boardTargets={};holidays=[];step('cloudLogin');}
+ await db.auth.signOut();user=null;workspace=null;workspaceName=null;role=null;el('cloudIdentity').textContent='';server=new Map();localStorage.removeItem(SPACE_KEY);records=[];staff=[];absences=[];shiftOverrides=[];tasks=[];otRecords=[];boardAssignments=[];boardTargets={};holidays=[];step('cloudLogin');}
+function displayName(){return user?.user_metadata?.display_name?.trim()||user?.email?.split('@')[0]||'Usuario';}
+function refreshIdentity(){
+  const identity=el('cloudIdentity');
+  identity.textContent='👤 '+displayName()+' · '+(role==='admin'?'Administrador':'Editor');
+  identity.title=(user?.email||'')+' · '+(workspaceName||'Espacio compartido')+' · Editar perfil';
+}
+function openUserProfile(){
+  if(!user||!cloudActive){notify('Inicia sesión para editar el perfil');return;}
+  const f=el('userProfileForm');
+  f.elements.displayName.value=user?.user_metadata?.display_name||'';
+  f.elements.email.value=user.email||'';
+  f.elements.role.value=role==='admin'?'Administrador':'Editor';
+  f.elements.workspace.value=workspaceName||'Espacio compartido';
+  el('userProfileDialog').showModal();
+}
+el('cloudIdentity').addEventListener('click',openUserProfile);
+el('userProfileClose').addEventListener('click',()=>el('userProfileDialog').close());
+el('userProfileForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!db||!user)return;
+  const f=e.target,name=f.elements.displayName.value.trim();
+  if(name.length<2||name.length>80){notify('Escribe un nombre entre 2 y 80 caracteres');return;}
+  const button=f.querySelector('button[type=submit]');button.disabled=true;
+  try{
+    const {data,error}=await db.auth.updateUser({data:{display_name:name}});
+    if(error)throw error;
+    user=data.user||user;refreshIdentity();el('userProfileDialog').close();notify('✓ Nombre actualizado');
+  }catch(err){alert('No se pudo actualizar el perfil: '+errorMessage(err));}
+  finally{button.disabled=false;}
+});
 function guardButton(b,fn){el(b).addEventListener('click',async()=>{el(b).disabled=true;try{setError('');await fn();}catch(e){setError(errorMessage(e));}finally{el(b).disabled=false;}});}
 // El modo demo permite probar la interfaz sin base de datos; nunca simula sincronización.
 function enterLocalDemo(){
