@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#102722" />
-  <meta name="description" content="ALUMALSA CONTROL · Mini App de demostración para incidencias, tareas, OT y personal." />
-  <title>ALUMALSA CONTROL v0.4 · Operaciones y personal</title>
+  <meta name="description" content="ALUMALSA CONTROL · Aplicación multiusuario de prueba" />
+  <title>ALUMALSA CONTROL v0.6.1 · Multiusuario</title>
   <script src="https://telegram.org/js/telegram-web-app.js?65"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
-    :root { --bg:#f3f6f4; --surface:#fff; --dark:#102722; --green:#176c47; --green-soft:#e9f5ed; --muted:#64736d; --line:#e3ebe6; --red:#b93239; --red-soft:#fff0ee; --orange:#b56c13; --orange-soft:#fff5e7; --shadow:0 10px 28px rgba(28,50,35,.05); color-scheme:light; }
+:root { --bg:#f3f6f4; --surface:#fff; --dark:#102722; --green:#176c47; --green-soft:#e9f5ed; --muted:#64736d; --line:#e3ebe6; --red:#b93239; --red-soft:#fff0ee; --orange:#b56c13; --orange-soft:#fff5e7; --shadow:0 10px 28px rgba(28,50,35,.05); color-scheme:light; }
     * { box-sizing:border-box; }
     html { min-height:100%; -webkit-text-size-adjust:100%; }
     body { margin:0; background:var(--bg); color:#1b2a23; font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
@@ -253,20 +255,106 @@
     .note,.warning-note{line-height:1.5}.toast{border-radius:13px}
     @media(max-width:360px){.module{padding:10px 7px;gap:6px}.module-icon{width:29px;height:29px}.module b{font-size:10px}.module small{font-size:9px}.home-actionbar{grid-template-columns:1.1fr 1fr}.primary-short,.outlined-short{font-size:10px}.stat{padding:11px 9px}.stat b{font-size:24px}.stat span:last-child{font-size:9px}}
     @media(min-width:760px){.stats{gap:14px}.overview-grid{gap:14px}.module-grid{grid-template-columns:repeat(4,1fr)}main{padding:24px}.hero{padding:20px 24px 25px}}
-  </style>
+
+    /* v0.5 · acceso seguro, sincronización y diseño ancho de PC */
+    body:not(.cloud-ready) .shell { display:none !important; }
+    body.cloud-ready #cloudGate { display:none !important; }
+    .cloud-gate {min-height:100dvh;padding:24px 14px;display:flex;align-items:flex-start;justify-content:center;background:linear-gradient(150deg,#102722,#1e624a 45%,#f0f4f1 45%);}
+    .cloud-card {width:100%;max-width:480px;background:white;border-radius:20px;padding:26px;box-shadow:0 16px 45px #09251825;margin:24px auto;}
+    .cloud-brand {font-size:13px;font-weight:900;letter-spacing:1.1px;color:#176c47;display:flex;justify-content:space-between}
+    .cloud-brand span{font-size:11px;color:#66806f}
+    .cloud-card h1{font-size:25px;letter-spacing:-.6px;line-height:1.2;margin:22px 0 10px}
+    .cloud-card h2{font-size:17px;margin:18px 0 7px}
+    .cloud-card p,.cloud-card label{font-size:13px;color:#61756a;line-height:1.5}
+    .cloud-card label{display:block;color:#244234;font-weight:700;margin:15px 0}
+    .cloud-card input,.cloud-card textarea{display:block;width:100%;margin-top:7px;padding:12px;border:1px solid #cbdad0;border-radius:10px;background:#fafffb;min-height:44px;overflow-wrap:anywhere}
+    .cloud-card button{width:100%;margin-top:10px}
+    .cloud-card .cloud-link{background:none;border:0;color:#206b4b;text-decoration:underline;font-size:12px}
+    .cloud-card .cloud-error{background:#fff0ef;color:#b22c2c;padding:12px;border-radius:9px;white-space:pre-wrap}
+    .cloud-card .cloud-disclaimer{margin-top:30px;font-size:11px;color:#765b3b;background:#fff7e9;padding:12px;border-radius:10px}
+    .cloud-sep{display:flex;align-items:center;gap:6px;font-size:11px;color:#84968c;margin:20px 0 12px}
+    .cloud-sep:before,.cloud-sep:after{content:'';flex:1;height:1px;background:#e2eae5}
+    .cloud-space-item{width:100%;border:1px solid #d8e4da;border-radius:10px;padding:12px;margin:7px 0;text-align:left;color:#1b4d32;background:#f8fcf9}
+    .cloud-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#e4f2e9;border-bottom:1px solid #d8e6db;color:#145338;padding:10px 15px;font-size:11px;font-weight:750}
+    .cloud-bar-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .cloud-bar button{border:1px solid #c9dfd1;border-radius:9px;background:white;color:#176c47;font-size:11px;font-weight:700;padding:6px 8px}
+    body.cloud-saving #cloudStatus{color:#b0701d}
+    @media(min-width:820px){.shell{max-width:1100px}.bottom-nav{max-width:900px;left:50%;transform:translateX(-50%);border:1px solid #e3ebe6;border-radius:16px 16px 0 0}.module-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:420px){.cloud-bar{align-items:flex-start;flex-direction:column}.cloud-bar-actions{width:100%}.cloud-bar button{flex:1}.cloud-card{padding:20px}}
+
+/* v0.6: Pantallas grandes y estado de conexión. */
+@media (min-width: 900px) {
+  .shell { max-width: 1240px; width: calc(100vw - 250px); margin: 0 24px 0 226px; padding-bottom: 35px; }
+  .bottom-nav { inset: 0 auto 0 0; left:0; right:auto; top:0; bottom:0; transform:none; max-width:none; width: 206px; grid-template-columns: 1fr; display: flex;
+    flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 7px;
+    border-top: 0; border-right: 1px solid var(--line); padding: 38px 12px; }
+  .bottom-nav .tab { display:flex; align-items:center; justify-content:flex-start; gap: 12px;
+    font-size: 13px; padding: 13px 12px; text-align: left; }
+  .bottom-nav .tab .ico {width:22px; height:22px; display:grid; place-items:center;}
+  .hero {padding:30px 35px; border-radius:0 0 22px 22px;}
+  .hero h1 {font-size:32px;}
+  main {padding: 25px 34px 45px;}
+  .people-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .module-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .year-matrix {grid-template-columns:repeat(4,minmax(0,1fr));}
+  .calendar-scroll {max-height: 72vh;}
+  .cloud-bar {padding:12px 28px;}
+  .cloud-gate {align-items:center;}
+  .cloud-card {max-width:560px;}
+}
+@media (min-width: 1550px) { .shell { margin-left: max(226px, calc((100vw - 1340px)/2)); } }
+@media (max-width: 899px) { .shell { max-width: 600px; } }
+body.is-offline .cloud-bar {background:#fff1da; color:#895507;}
+body.is-offline #cloudStatus {color:#8e5506;}
+.app-version-label {position:fixed;right:12px;bottom:8px;font-size:10px;color:#9aa9a1;z-index:2;pointer-events:none;}
+@media(max-width:899px) {.app-version-label{display:none;}}
+
+body:not(.cloud-ready) .bottom-nav { display:none !important; }
+body.is-demo .cloud-bar-actions button:not(#cloudExit){display:none!important;}
+
+/* v0.6.1: invitaciones directas y usuario conectado */
+.cloud-card .cloud-invite-notice,.cloud-card .cloud-info{color:#125d3c;border:1px solid #cce5d5;background:#e9f6ee;border-radius:10px;padding:12px;line-height:1.5;font-size:13px}
+.cloud-bar-who{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cloud-identity{color:#245c44;background:white;border:1px solid #c9dfd1;border-radius:999px;padding:5px 9px;font-size:11px;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:600px){.cloud-bar-who{align-items:flex-start;flex-direction:column;gap:7px}.cloud-identity{max-width:100%}}
+
+</style>
 </head>
 <body>
+  <div id="cloudGate" class="cloud-gate"><div class="cloud-card">
+    <div class="cloud-brand">◈ ALUMALSA CONTROL <span>v0.6.1</span></div>
+    <h1>Espacio de trabajo compartido</h1><p class="cloud-intro">Una misma información en PC, iPhone y otros móviles. Solo para datos ficticios o expresamente autorizados.</p>
+    <div id="cloudSetup" class="cloud-step"><h2>1. Conectar base de datos</h2><p>Crea un proyecto gratis en Supabase. Introduce únicamente la URL pública del proyecto y su <b>publishable key</b> (o anon key). Nunca utilices la service_role/secret key.</p>
+      <label>Project URL<input id="cloudUrl" type="url" inputmode="url" placeholder="https://xxxx.supabase.co" autocapitalize="off" autocomplete="off"></label>
+      <label>Publishable / anon key<textarea id="cloudKey" rows="2" autocomplete="off" spellcheck="false" placeholder="sb_publishable_... / eyJ..."></textarea></label>
+      <button class="primary" id="cloudConnect">Conectar Supabase</button><button class="outlined" id="cloudDemo" type="button" style="width:100%;margin-top:10px">Explorar demo local (sin cuenta)</button>
+    </div>
+    <div id="cloudLogin" class="cloud-step" hidden><h2>2. Entrar con tu cuenta</h2><p id="cloudLoginIntro">Utiliza dos correos diferentes para probar con dos usuarios.</p><p id="cloudInviteNotice" class="cloud-invite-notice" hidden>✉️ Has recibido una invitación al espacio compartido. Crea tu cuenta o inicia sesión y entrarás en el equipo automáticamente.</p>
+      <form id="cloudAuthForm"><label>Correo electrónico<input id="cloudEmail" type="email" autocomplete="username" required></label><label>Contraseña<input id="cloudPassword" type="password" autocomplete="current-password" minlength="6" required></label><button class="primary" type="submit">Iniciar sesión</button></form>
+      <button class="outlined cloud-alt" id="cloudSignup">Crear cuenta de prueba</button><button class="cloud-link" id="cloudReconfigure">Cambiar conexión</button>
+    </div>
+    <div id="cloudWorkspace" class="cloud-step" hidden><h2>3. Equipo de trabajo</h2><p id="cloudWho"></p><div id="cloudMySpaces"></div>
+      <label>Crear espacio (primer usuario)<input id="cloudWorkspaceName" placeholder="Ej. ALUMALSA DEMO"></label><button class="primary" id="cloudCreate">Crear espacio compartido</button>
+      <div class="cloud-sep">O UNIRSE A UN ESPACIO EXISTENTE</div>
+      <label>Código de invitación<input id="cloudInviteCode" type="text" autocapitalize="off" autocomplete="off" placeholder="Pega el código facilitado por el administrador"></label><button class="outlined" id="cloudJoin">Unirme con el código</button>
+      <button class="cloud-link" id="cloudSignoutGate">Cerrar sesión</button>
+    </div>
+    <div id="cloudLoading" class="cloud-step" hidden><h2>Cargando información…</h2><p>Comprobando permisos y descargando registros compartidos.</p></div>
+    <p class="cloud-error" id="cloudError" role="alert" hidden></p><p class="cloud-info" id="cloudInfo" role="status" hidden></p>
+    <p class="cloud-disclaimer">⚠️ Prototipo de evaluación. No introducir datos reales de plantilla, permisos ni producción sin aprobación corporativa.</p>
+  </div></div>
   <div class="shell">
     <header class="hero">
       <div class="hero-top">
         <div class="brand"><span class="logo" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4v-4l6 4V5l6-2v18H3Z"/><path d="M7 18h.01M12 18h.01M17 18h.01"/></svg></span><div><div class="brand-name">ALUMALSA <b>CONTROL</b></div><div class="eyebrow">Centro de operaciones</div></div></div>
-        <span class="demo-pill"><span class="status-dot"></span> Modo demo</span>
+        <span class="demo-pill"><span class="status-dot"></span> Multiusuario · piloto v0.6.1</span>
       </div>
       <div class="hero-heading"><div><div class="hero-topline" id="heroDate">PANEL OPERATIVO</div><h1 id="heroTitle">Panel de producción</h1><p id="heroDesc">Registro y seguimiento de incidencias</p></div></div>
     </header>
+    <div class="cloud-bar"><div class="cloud-bar-who"><span id="cloudStatus">◌ Conectando…</span><span id="cloudIdentity" class="cloud-identity" aria-label="Usuario conectado"></span></div><span class="cloud-bar-actions"><button type="button" id="cloudRefresh">↻ Actualizar</button><button type="button" id="cloudInvite">+ Invitar</button><button type="button" id="cloudMigrate">Importar local</button><button type="button" id="cloudSample">Datos demo</button><button type="button" id="cloudExit">Salir</button></span></div>
     <main>
       <section id="view-home">
-        <div class="home-eyebrow"><span id="dashboardDate">RESUMEN OPERATIVO</span><span class="today-marker"><span></span> Datos locales</span></div>
+        <div class="home-eyebrow"><span id="dashboardDate">RESUMEN OPERATIVO</span><span class="today-marker"><span></span> Datos compartidos</span></div>
         <div class="stats">
           <button class="stat danger" type="button" data-nav="pending"><span class="stat-icon" aria-hidden="true">!</span><b id="countPending">0</b><span>Avisos pendientes</span></button>
           <button class="stat orange" type="button" data-nav="pending"><span class="stat-icon" aria-hidden="true">◷</span><b id="countWorking">0</b><span>En curso</span></button>
@@ -296,7 +384,7 @@
         <div class="section-head"><div><span class="mini-label">ACTIVIDAD</span><h2>Últimas incidencias</h2></div><button class="linkbtn" data-nav="history">Ver historial <span aria-hidden="true">→</span></button></div>
         <div id="recentList" class="record-list"></div>
         <div class="home-utilities"><button class="outlined" type="button" id="copySummary">⧉ Copiar resumen de avisos</button></div>
-        <div class="note demo-note"><strong>Versión de demostración · sin servidor</strong><span>Los datos permanecen en este dispositivo. Sin usuarios simultáneos ni sincronización con IFS. Utiliza exclusivamente información ficticia.</span></div>
+        <div class="note demo-note"><strong>v0.6.1 · Espacio compartido de prueba</strong><span>Incidencias, tareas, OT, permisos y cuadrantes compartidos entre usuarios autorizados. IFS únicamente mediante importación CSV. No utilizar datos reales sin permiso corporativo.</span></div>
       </section>
       <section id="view-new" hidden>
         <div class="view-title">Registrar incidencia</div>
@@ -341,7 +429,7 @@
             <p class="help">* Ausentes hoy: permisos autorizados, no solicitudes pendientes. Los turnos previstos no equivalen a confirmación de presencia.</p>
           </div>
           <div id="staffEditor" hidden class="panel">
-            <h2 id="staffEditorTitle">Alta de trabajador</h2><p>Los datos se guardan solo en este dispositivo.</p>
+            <h2 id="staffEditorTitle">Alta de trabajador</h2><p>Los datos se guardan en el espacio compartido al confirmar el formulario.</p>
             <form id="staffForm">
               <input type="hidden" name="editId" />
               <div class="form-row"><label class="field"><span>Matrícula *</span><input name="employeeNo" required maxlength="20" placeholder="DEMO-101"></label><label class="field"><span>Equipo *</span><select name="team" required><option>Verde</option><option>Azul</option><option>Gris</option><option>Morado</option><option>Naranja</option><option>Otro</option></select></label></div>
@@ -381,14 +469,14 @@
           </div>
         </div>
         <div id="personal-files" hidden>
-          <div class="panel"><h2>Exportación y copias</h2><p>Descarga los datos a tu móvil antes de cambiar de dispositivo o borrar los datos de Telegram.</p>
+          <div class="panel"><h2>Exportación y copias</h2><p>La información se guarda en la base de datos compartida. Descarga copias de seguridad periódicamente; el plan gratuito no incluye copias automáticas.</p>
             <div class="file-commands"><button class="outlined" id="exportBackup">⬇ Copia completa JSON</button><button class="outlined" id="exportPeople">⬇ Plantilla CSV</button><button class="outlined" id="exportAbsences">⬇ Permisos CSV</button><button class="outlined" id="exportIncidents">⬇ Incidencias CSV</button></div>
-            <div class="import-zone"><strong>Restaurar copia JSON</strong><p class="help">Sustituye todos los registros locales. La copia debe proceder de esta app.</p><input id="restoreFile" type="file" accept=".json,application/json" /></div>
+            <div class="import-zone"><strong>Restaurar copia JSON</strong><p class="help">La restauración completa queda deshabilitada en modo multiusuario para evitar sobrescribir datos de otros compañeros.</p><input id="restoreFile" type="file" accept=".json,application/json" /></div>
             <div class="import-zone"><strong>Importar plantilla desde CSV</strong><p class="help">Cabeceras: matricula;nombre;apellidos;equipo;patron;ancla;activo. Acepta CSV UTF-8 separado por punto y coma o coma. No importa .xlsx directamente.</p><input id="importPeople" type="file" accept=".csv,text/csv"/><button type="button" class="outlined" style="margin-top:9px" id="templatePeople">Descargar plantilla CSV</button></div>
             <div class="import-zone"><strong>Importar permisos desde CSV</strong><p class="help">Cabeceras: matricula;codigo;desde;hasta;estado;notas. Fechas AAAA-MM-DD. Las matrículas deben existir.</p><input id="importAbsences" type="file" accept=".csv,text/csv"/><button type="button" class="outlined" style="margin-top:9px" id="templateAbsences">Descargar plantilla CSV</button></div>
           </div>
-          <div class="note">Las copias v0.3 incluyen incidencias, tareas, OT, cuadrantes, plantilla y festivos. Puedes restaurar una copia v0.2 anterior.</div>
-          <div class="note">⚠️ GitHub Pages es público y esta versión no tiene autenticación. No introduzcas información real de empleados hasta contar con un backend corporativo y permisos autorizados. No incluyas CSV, copias ni datos personales en el repositorio.</div>
+          <div class="note">Las copias JSON siguen disponibles para exportar. La importación global necesita una migración controlada.</div>
+          <div class="note">⚠️ El HTML de GitHub Pages sigue siendo público, pero los datos de prueba están en Supabase y requieren inicio de sesión y pertenencia al espacio. No introducir datos reales sin autorización corporativa. No subir CSV ni copias al repositorio.</div>
         </div>
       </section>
       <section id="view-calendar" hidden>
@@ -484,8 +572,12 @@
     <button class="tab" data-nav="personnel"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M18 8a3 3 0 0 1 0 6M19 20h2v-2a5 5 0 0 0-3-4.6"/></svg></span><span>Personal</span></button>
   </nav>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script>
-    'use strict';
+  
+<script>
+'use strict';
+let cloudActive=false;
+const ALUMALSA_PUBLIC_CONFIG={"supabaseUrl":"https://juqlgdjtwihepxtvktri.supabase.co","supabasePublishableKey":"sb_publishable_KEbS4sg5J9UaixpbHGPgTA_4VtW03V-","publicAppUrl":"https://joaowalking.github.io/alumalsa-miniapp-demo/"};
+
     const STORAGE_KEY = 'alumalsa_miniapp_demo_v1';
     const CATEGORIES = {MEC:'Mecánica',ELEC:'Eléctrica',FUS:'Fusión',MACH:'Machería',TT:'Tratamiento térmico',LP:'Líquidos penetrantes',PROD:'Producción',CAL:'Calidad',FUND:'Fundición',RX:'Rayos X'};
     const $ = (id) => document.getElementById(id);
@@ -505,7 +597,7 @@
       return starterRecords();
     }
     let records = load();
-    function save() { try { localStorage.setItem(STORAGE_KEY,JSON.stringify(records)); return true; } catch (_e) { notify('⚠️ No se ha podido guardar en el dispositivo'); return false; } }
+    function save() { if(cloudActive) {cloudSubmit(['incident']);return true;} try {localStorage.setItem(STORAGE_KEY,JSON.stringify(records));return true;} catch(_e){notify('⚠️ No se ha podido guardar localmente');return false;} }
     if (!localStorage.getItem(STORAGE_KEY)) save();
     function escapeHTML(str) { return String(str == null ? '' : str).replace(/[&<>"']/g, x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x])); }
     function dateText(ts) { try { return new Date(ts).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); } catch (_e) { return ''; } }
@@ -539,7 +631,7 @@
       $('heroTitle').textContent=headings[view][0]; $('heroDesc').textContent=headings[view][1];
       redraw(); if(typeof renderPersonnel==='function') renderPersonnel(); if(typeof renderV03==='function') renderV03(); window.scrollTo({top:0,behavior:'instant'});
     }
-    function createNextId(area) { const max=records.filter(r=>r.area===area).reduce((m,r)=>Math.max(m,Number(String(r.id).split('-').pop())||0),0); return `${area}-${String(max+1).padStart(4,'0')}`; }
+    function createNextId(area) {return `${area}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;}
     function formatRecord(r) { return `${r.id} · ${CATEGORIES[r.area]||r.area}\nEquipo: ${r.equipment||'—'}\nPrioridad: ${priorityText(r.priority)}\nDescripción: ${r.description}\nResponsable: ${r.assignee}\nTurno: ${r.shift}\nEstado: ${statusText(r.status)}\nFecha: ${dateText(r.created)}`; }
     async function copyText(text) { try { await navigator.clipboard.writeText(text); notify('✓ Texto copiado al portapapeles'); } catch (_e) { const area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.focus(); area.select(); try { document.execCommand('copy')?notify('✓ Texto copiado'):notify('No se pudo copiar el texto'); } catch (_er) { notify('No se pudo copiar el texto'); } area.remove(); } }
     document.addEventListener('click',e=>{
@@ -555,12 +647,13 @@
       records.push(newRecord); save(); e.target.reset(); goto('pending'); notify(`✓ ${newRecord.id} registrada`);
     });
     for(const id of ['pendingSearch','pendingArea','pendingPriority','historySearch','historyStatus']) $(id).addEventListener('input',redraw);
-    $('resetDemo').addEventListener('click',()=>{ if (!confirm('Se borrarán los registros que hayas añadido en este dispositivo. ¿Restablecer los datos de ejemplo?')) return; records=starterRecords();save();goto('home');notify('Datos de prueba restablecidos'); });
+    $('resetDemo').addEventListener('click',()=>{ if(cloudActive){alert('En modo compartido no se puede restablecer toda la base desde este botón.');return;} if (!confirm('Se borrarán los registros que hayas añadido en este dispositivo. ¿Restablecer los datos de ejemplo?')) return; records=starterRecords();save();goto('home');notify('Datos de prueba restablecidos'); });
     $('copySummary').addEventListener('click',()=>{
       const pending=records.filter(r=>r.status!=='resuelta');
       const summary=`ALUMALSA CONTROL · Resumen de prueba\nPendientes: ${records.filter(r=>r.status==='pendiente').length}\nEn curso: ${records.filter(r=>r.status==='curso').length}\nResueltas: ${records.filter(r=>r.status==='resuelta').length}\n\n${sorted(pending).map(formatRecord).join('\n\n')||'Sin incidencias abiertas'}`;
       copyText(summary);
     });
+
 
     // ===============================================
     // ALUMALSA CONTROL 0.2 · PERSONAL / PERMISOS
@@ -592,7 +685,7 @@
     function isWeekend(iso){return [0,6].includes(fromISO(iso).getDay());}
     function offDay(iso){return !!holidayAt(iso)||isWeekend(iso);}
     function offName(iso){return holidayAt(iso)?.name||(isWeekend(iso)?'Fin de semana':'');}
-    function saveHolidays(){try{localStorage.setItem(HOLIDAYS_KEY,JSON.stringify(holidays));return true;}catch(e){notify('No se pudieron guardar festivos');return false;}}
+    function saveHolidays(){if(cloudActive){cloudSubmit(['holiday']);return true;}try{localStorage.setItem(HOLIDAYS_KEY,JSON.stringify(holidays));return true;}catch(e){notify('No se pudieron guardar festivos');return false;}}
     if(!localStorage.getItem(HOLIDAYS_KEY)) saveHolidays();
     
     const today = localISO(new Date());
@@ -614,6 +707,7 @@
     let shiftOverrides=readArray(SHIFTS_KEY,[]);
     let personalTab='staff', calendarTab='daily', currentPersonId=null, currentYear=Number(today.slice(0,4)), selectedDayAction=null;
     function savePeople() {
+      if(cloudActive){cloudSubmit(['staff','absence','shift']);return true;}
       try { localStorage.setItem(STAFF_KEY,JSON.stringify(staff));localStorage.setItem(ABS_KEY,JSON.stringify(absences));localStorage.setItem(SHIFTS_KEY,JSON.stringify(shiftOverrides));return true; }
       catch(_e) {notify('Sin espacio para almacenar datos. Exporta una copia.'); return false;}
     }
@@ -890,7 +984,7 @@
         absences=draft;savePeople();renderPersonnel();notify('✓ Permisos importados');
       }catch(err){alert('Importación cancelada: '+err.message)}finally{e.target.value='';}
     });
-    $('restoreFile').addEventListener('change',async e=>{
+    $('restoreFile').addEventListener('change',async e=>{if(cloudActive){e.target.value='';alert('La restauración masiva no está habilitada para el espacio compartido. Exporta antes una copia y solicita una migración controlada.');return;}
       try{const file=await readFile(e.target),obj=JSON.parse(file);
         if(obj.app!=='ALUMALSA_CONTROL'||![2,3].includes(obj.version)||![obj.incidents,obj.staff,obj.absences,obj.shiftOverrides].every(Array.isArray))throw Error('Copia no reconocida');
         if(!obj.staff.every(x=>typeof x.employeeNo==='string'&&x.id)||!obj.absences.every(x=>x.id&&x.personId&&validISO(x.from)&&validISO(x.to)))throw Error('Estructura de personal o permisos incorrecta');
@@ -900,6 +994,7 @@
         save();savePeople();saveV03();saveHolidays();closePersonPanels();goto('home');notify('✓ Copia restaurada');
       }catch(err){alert('No se pudo restaurar: '+err.message)}finally{e.target.value='';}
     });
+
 
 // ===========================================================
 // v0.3 - Órdenes CSV, tareas, puestos y calendario laboral
@@ -916,8 +1011,8 @@ const PVAL={'G':0,'1':1,'2':2,'3':3,'-':4};
 function taskPriority(p){return Object.prototype.hasOwnProperty.call(PVAL,p)?p:'-';}
 function taskSort(a,b){return (PVAL[taskPriority(a.priority)]-PVAL[taskPriority(b.priority)])||
   ((a.due||'9999').localeCompare(b.due||'9999'))||(b.created-a.created);}
-function taskId(){let n=tasks.reduce((m,x)=>Math.max(m,Number(String(x.id).replace(/^T-/,'')||0)||0),0)+1;return 'T-'+String(n).padStart(4,'0');}
-function saveV03(){try{localStorage.setItem(TASK_KEY,JSON.stringify(tasks));localStorage.setItem(OT_KEY,JSON.stringify(otRecords));localStorage.setItem(BOARD_KEY,JSON.stringify(boardAssignments));localStorage.setItem(TARGETS_KEY,JSON.stringify(boardTargets));return true;}catch(_e){notify('⚠️ No se pudieron guardar datos');return false;}}
+function taskId(){return 'T-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();}
+function saveV03(){if(cloudActive){cloudSubmit(['task','ot','board','target']);return true;}try{localStorage.setItem(TASK_KEY,JSON.stringify(tasks));localStorage.setItem(OT_KEY,JSON.stringify(otRecords));localStorage.setItem(BOARD_KEY,JSON.stringify(boardAssignments));localStorage.setItem(TARGETS_KEY,JSON.stringify(boardTargets));return true;}catch(_e){notify('⚠️ No se pudieron guardar datos');return false;}}
 function updateDashboardV04(){
   const nowDate=new Date();const label=nowDate.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
   const labelText=label.charAt(0).toUpperCase()+label.slice(1);
@@ -1111,6 +1206,172 @@ saveV03();
 
     renderPersonnel();
     redraw();
-  </script>
+
+
+/* v0.6.1 · Enlace de invitación directo; conexión pública configurada en build. */
+(()=>{
+'use strict';
+const CONFIG_URL='ac_supabase_url_v05', CONFIG_KEY='ac_supabase_pub_v05', SPACE_KEY='ac_workspace_v05';
+const PENDING_INVITE_KEY='ac_pending_invite_v061';
+const CONFIG=ALUMALSA_PUBLIC_CONFIG;
+const UUID_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function pendingInvite(){return localStorage.getItem(PENDING_INVITE_KEY)||'';}
+function captureInvitation(){const url=new URL(location.href),code=url.searchParams.get('invite');if(code===null)return;url.searchParams.delete('invite');history.replaceState(history.state,'',url.pathname+url.search+url.hash);if(UUID_RE.test(code))localStorage.setItem(PENDING_INVITE_KEY,code);else localStorage.removeItem(PENDING_INVITE_KEY);}
+captureInvitation();
+function appPublicUrl(){const url=CONFIG.publicAppUrl||location.origin+location.pathname;return new URL(url,location.href);}
+function signupRedirectUrl(){const url=appPublicUrl();if(pendingInvite())url.searchParams.set('invite',pendingInvite());return url.href;}
+const KINDS=['incident','staff','absence','shift','task','ot','board','target','holiday'];
+const STORAGE={incident:()=>records,staff:()=>staff,absence:()=>absences,shift:()=>shiftOverrides,task:()=>tasks,ot:()=>otRecords,board:()=>boardAssignments,holiday:()=>holidays,target:()=>Object.entries(boardTargets).map(([key,value])=>({key,value}))};
+const keysFor={incident:x=>x.id,staff:x=>x.id,absence:x=>x.id,shift:x=>x.personId+'@'+x.date,task:x=>x.id,ot:x=>x.id,board:x=>x.id,target:x=>x.key,holiday:x=>x.date};
+let db=null, user=null, workspace=null, role=null, server=new Map();
+let writeQueue=Promise.resolve(), pendingCount=0, needRefresh=false, liveChannel=null, poller=null, refreshTimer=null;
+const el=id=>document.getElementById(id);
+const clone=x=>JSON.parse(JSON.stringify(x));
+function setError(m){const node=el('cloudError');node.textContent=m||'';node.hidden=!m;}
+function setInfo(m){const node=el('cloudInfo');node.textContent=m||'';node.hidden=!m;}
+function step(name){for(const id of ['cloudSetup','cloudLogin','cloudWorkspace','cloudLoading'])el(id).hidden=id!==name;setError('');setInfo('');el('cloudInviteNotice').hidden=!(name==='cloudLogin'&&pendingInvite());}
+function status(text){el('cloudStatus').textContent=text;}
+function errorMessage(e){return String(e?.message||e||'Error desconocido').slice(0,500);}
+function urlOk(u){return /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(u.trim());}
+function setMode(ready){document.body.classList.toggle('cloud-ready',ready);cloudActive=ready;}
+function mkmap(rows){const map=new Map();for(const r of rows)map.set(r.kind+'|'+r.record_key,{revision:r.revision,data:r.data});return map;}
+async function initDb(){const url=CONFIG.supabaseUrl||localStorage.getItem(CONFIG_URL)||'',key=CONFIG.supabasePublishableKey||localStorage.getItem(CONFIG_KEY)||'';el('cloudUrl').value=url;el('cloudKey').value=key;if(!url||!key){step('cloudSetup');if(pendingInvite())setError('El administrador debe publicar la aplicación con la conexión a Supabase ya configurada. No tienes que introducir claves.');return;}
+  if(!window.supabase?.createClient){step('cloudSetup');setError('No se pudo cargar la librería Supabase. Comprueba la conexión a Internet.');return;}
+  try{db=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data:{user:me},error}=await db.auth.getUser();if(error&&error.status!==400)throw error;
+    user=me||null;if(!user){step('cloudLogin');return;}await showSpaces();
+  }catch(e){step('cloudSetup');setError('Error de conexión: '+errorMessage(e));}
+}
+async function showSpaces(){step('cloudLoading');setMode(false);
+ let invitationError='';
+ if(pendingInvite()){
+   const code=pendingInvite();const {data:joined,error:inviteError}=await db.rpc('join_workspace',{p_code:code});
+   localStorage.removeItem(PENDING_INVITE_KEY);
+   if(!inviteError&&joined){await enterSpace(joined);notify('✓ Invitación aceptada. Ya tienes acceso al espacio.');return;}
+   invitationError='No se pudo usar la invitación: '+errorMessage(inviteError)+'. Solicita una nueva si está caducada o ya utilizada.';
+ }
+ try{const {data, error}=await db.from('memberships').select('workspace_id,role,workspaces(name)').eq('user_id',user.id);
+  if(error)throw error;
+  const spaces=(data||[]).map(x=>({id:x.workspace_id,role:x.role,name:x.workspaces?.name||'Espacio compartido'}));
+  const preferred=localStorage.getItem(SPACE_KEY);
+  if(!invitationError&&spaces.find(x=>x.id===preferred)){await enterSpace(preferred);return;}
+  if(!invitationError&&spaces.length===1){await enterSpace(spaces[0].id);return;}
+  el('cloudWho').textContent='Conectado: '+user.email;
+  el('cloudMySpaces').innerHTML='';spaces.forEach(x=>{const b=document.createElement('button');b.className='cloud-space-item';b.textContent='↗ '+x.name+' · '+x.role;b.onclick=()=>enterSpace(x.id);el('cloudMySpaces').appendChild(b);});
+  step('cloudWorkspace');if(invitationError)setError(invitationError);
+ }catch(e){step('cloudWorkspace');setError('No se pudieron leer los espacios. Comprueba que has ejecutado el SQL: '+errorMessage(e));}
+}
+async function enterSpace(id){step('cloudLoading');try{
+  const {data:m,error:me}=await db.from('memberships').select('role').eq('workspace_id',id).eq('user_id',user.id).single();if(me)throw me;
+  workspace=id;role=m.role;localStorage.setItem(SPACE_KEY,id);await fetchCloud(true);
+  setMode(true);status('● Conectado');el('cloudIdentity').textContent='👤 '+(user.email||'usuario')+' · '+(role==='admin'?'Administrador':'Editor');
+  el('cloudInvite').hidden=role!=='admin';el('cloudMigrate').hidden=role!=='admin';el('cloudSample').hidden=role!=='admin';
+  redraw();renderPersonnel();renderV03();subscribe();
+ }catch(e){setMode(false);step('cloudWorkspace');setError('No se pudo abrir el espacio: '+errorMessage(e));}
+}
+async function fetchCloud(initial=false){if(!db||!workspace)return;
+ const rows=[];let from=0;
+ while(true){const {data,error}=await db.from('documents').select('kind,record_key,data,revision').eq('workspace_id',workspace).order('kind').order('record_key').range(from,from+999);
+   if(error)throw error;rows.push(...(data||[]));if((data||[]).length<1000)break;from+=1000;if(from>=30000)throw Error('Más de 30.000 filas; utilizar exportación paginada.');}
+ server=mkmap(rows);
+ const grouped=Object.fromEntries(KINDS.map(k=>[k,[]]));for(const r of rows)if(grouped[r.kind])grouped[r.kind].push(clone(r.data));
+ records=grouped.incident;staff=grouped.staff;absences=grouped.absence;shiftOverrides=grouped.shift;tasks=grouped.task;otRecords=grouped.ot;boardAssignments=grouped.board;holidays=grouped.holiday;
+ boardTargets=Object.fromEntries(grouped.target.map(x=>[x.key,x.value]));
+ if(!initial){redraw();renderPersonnel();renderV03();}
+ status('● Sincronizado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}));
+}
+function expected(kinds){const snapshots={};for(const kind of kinds)snapshots[kind]=clone(STORAGE[kind]());return snapshots;}
+function buildChanges(snapshot){let changes=[];
+ for(const [kind,list] of Object.entries(snapshot)){
+   const items=new Map();for(const row of list){const key=String(keysFor[kind](row)||'');if(!key)throw Error('Registro sin ID en '+kind);if(items.has(key))throw Error('Identificador duplicado: '+key);items.set(key,row);}
+   for(const [key,row] of items){const original=server.get(kind+'|'+key);
+      if(!original || JSON.stringify(original.data)!==JSON.stringify(row))changes.push({op:'upsert',kind,key,data:row,expected_revision:original?.revision??null});
+   }
+   for(const [compound,original] of server){const i=compound.indexOf('|'),sk=compound.slice(0,i),key=compound.slice(i+1);if(sk===kind&&!items.has(key))changes.push({op:'delete',kind,key,expected_revision:original.revision});}
+ }
+ changes.sort((a,b)=>(a.kind+'|'+a.key).localeCompare(b.kind+'|'+b.key));return changes;
+}
+async function writeSnapshot(snapshot){const changes=buildChanges(snapshot);if(!changes.length)return;
+  // Atomic transaction per group, avoiding partial local resets on a network failure.
+  // CSV imports with > 200 records become several independent atomic batches.
+  for(let i=0;i<changes.length;i+=200){const batch=changes.slice(i,i+200);
+    const {data,error}=await db.rpc('sync_documents',{p_workspace:workspace,p_changes:batch});if(error)throw error;
+    for(const result of data||[]){const key=result.kind+'|'+result.key;
+      if(result.op==='delete')server.delete(key);else {const item=batch.find(x=>x.kind===result.kind&&x.key===result.key);server.set(key,{revision:result.revision,data:clone(item.data)});}
+    }
+  }
+}
+window.cloudSubmit=function(kinds){if(!cloudActive)return;
+  if(!navigator.onLine){status('⚠ Sin conexión, cambio NO guardado');alert('No hay conexión con la base de datos. El cambio no se ha guardado. Recarga la información cuando vuelva la conexión.');needRefresh=true;return;}
+  const snap=expected(kinds);pendingCount++;document.body.classList.add('cloud-saving');status('◌ Guardando cambios…');
+  writeQueue=writeQueue.then(()=>writeSnapshot(snap)).catch(async e=>{
+    status('⚠ Error de guardado');
+    alert('El cambio NO se ha guardado en la base de datos. Puede deberse a otra edición simultánea, un dato duplicado o falta de conexión.\n\n'+errorMessage(e)+'\n\nSe recargarán los datos compartidos.');
+    needRefresh=true;
+  }).finally(async()=>{pendingCount=Math.max(0,pendingCount-1);if(pendingCount===0){document.body.classList.remove('cloud-saving');try{await fetchCloud();needRefresh=false;}catch(e){status('⚠ Sin conexión. Pulsa Actualizar.');}}});
+};
+function scheduleRefresh(){if(!cloudActive)return;needRefresh=true;clearTimeout(refreshTimer);refreshTimer=setTimeout(async()=>{if(!pendingCount&&needRefresh){try{await fetchCloud();needRefresh=false;}catch(e){status('⚠ Sin conexión');}}},900);}
+function subscribe(){if(liveChannel){db.removeChannel(liveChannel);liveChannel=null;}
+ liveChannel=db.channel('alumalsa-docs-'+workspace).on('postgres_changes',{event:'*',schema:'public',table:'documents',filter:'workspace_id=eq.'+workspace},()=>scheduleRefresh()).subscribe();
+ clearInterval(poller);poller=setInterval(()=>{if(cloudActive&&!pendingCount)scheduleRefresh();},20000);
+}
+async function disconnect(){setMode(false);clearInterval(poller);clearTimeout(refreshTimer);if(liveChannel){await db.removeChannel(liveChannel);liveChannel=null;}
+ await db.auth.signOut();user=null;workspace=null;role=null;el('cloudIdentity').textContent='';server=new Map();localStorage.removeItem(SPACE_KEY);records=[];staff=[];absences=[];shiftOverrides=[];tasks=[];otRecords=[];boardAssignments=[];boardTargets={};holidays=[];step('cloudLogin');}
+function guardButton(b,fn){el(b).addEventListener('click',async()=>{el(b).disabled=true;try{setError('');await fn();}catch(e){setError(errorMessage(e));}finally{el(b).disabled=false;}});}
+// El modo demo permite probar la interfaz sin base de datos; nunca simula sincronización.
+function enterLocalDemo(){
+  cloudActive=false;
+  document.body.classList.add('cloud-ready','is-demo');
+  status('● DEMO LOCAL · datos solo en este navegador');
+  el('cloudExit').textContent='Conectar online';
+  redraw();renderPersonnel();renderV03();
+}
+guardButton('cloudDemo',async()=>enterLocalDemo());
+guardButton('cloudConnect',async()=>{
+ const url=el('cloudUrl').value.trim().replace(/\/$/,''),key=el('cloudKey').value.trim();if(!urlOk(url))throw Error('La URL debe ser https://TU-PROYECTO.supabase.co');if(key.length<25)throw Error('Introduce la publishable key o anon key completa.');
+ localStorage.setItem(CONFIG_URL,url);localStorage.setItem(CONFIG_KEY,key);await initDb();
+});
+guardButton('cloudReconfigure',async()=>{if(CONFIG.supabaseUrl&&CONFIG.supabasePublishableKey)throw Error('Esta aplicación ya incluye la conexión pública. No hace falta modificarla.');localStorage.removeItem(CONFIG_URL);localStorage.removeItem(CONFIG_KEY);localStorage.removeItem(SPACE_KEY);db=null;user=null;step('cloudSetup');});
+if(CONFIG.supabaseUrl&&CONFIG.supabasePublishableKey)el('cloudReconfigure').hidden=true;
+el('cloudAuthForm').addEventListener('submit',async e=>{e.preventDefault();setError('');try{const {data,error}=await db.auth.signInWithPassword({email:el('cloudEmail').value.trim(),password:el('cloudPassword').value});if(error)throw error;user=data.user;await showSpaces();}catch(e){setError('No se pudo iniciar sesión: '+errorMessage(e));}});
+guardButton('cloudSignup',async()=>{const email=el('cloudEmail').value.trim(),password=el('cloudPassword').value;if(!email||password.length<6)throw Error('Introduce correo y una contraseña de al menos 6 caracteres.');const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:signupRedirectUrl()}});if(error)throw error;if(data.session){user=data.user;await showSpaces();}else setInfo('Revisa tu correo para confirmar la cuenta. Después de confirmar, el enlace te devolverá a la aplicación y conservará la invitación. Si no entras automáticamente, inicia sesión con este correo.');});
+guardButton('cloudCreate',async()=>{const name=el('cloudWorkspaceName').value.trim();if(name.length<3||name.length>80)throw Error('Escribe un nombre para el espacio (3–80 caracteres).');const {data,error}=await db.rpc('create_workspace',{p_name:name});if(error)throw error;await enterSpace(data);});
+guardButton('cloudJoin',async()=>{const code=el('cloudInviteCode').value.trim();if(!UUID_RE.test(code))throw Error('El código de invitación no es válido.');const {data,error}=await db.rpc('join_workspace',{p_code:code});if(error)throw error;localStorage.removeItem(PENDING_INVITE_KEY);await enterSpace(data);});
+guardButton('cloudSignoutGate',disconnect);
+guardButton('cloudExit',async()=>{if(document.body.classList.contains('is-demo')){document.body.classList.remove('is-demo','cloud-ready');el('cloudExit').textContent='Salir';await initDb();return;}await disconnect();});
+guardButton('cloudRefresh',async()=>{if(pendingCount){notify('Hay cambios pendientes de guardar');return;}await fetchCloud();redraw();renderPersonnel();renderV03();notify('✓ Datos actualizados');});
+guardButton('cloudSample',async()=>{
+ if(role!=='admin')throw Error('Solo el administrador puede cargar ejemplos.');
+ if(server.size)throw Error('El espacio ya tiene datos. Por seguridad, los ejemplos solo pueden cargarse en espacios vacíos.');
+ if(!confirm('¿Cargar cuatro trabajadores ficticios, tres incidencias y el calendario festivo de ejemplo de 2026?'))return;
+ records=starterRecords();staff=sampleStaff();holidays=initialHolidays();
+ cloudSubmit(['incident','staff','holiday']);redraw();renderPersonnel();renderV03();notify('◌ Cargando datos ficticios…');
+});
+guardButton('cloudMigrate',async()=>{
+ if(role!=='admin')throw Error('Solo el administrador puede importar los datos locales.');
+ if(server.size)throw Error('El espacio compartido debe estar vacío para evitar sobrescribir información. Crea un espacio nuevo para importar.');
+ if(!confirm('¿Copiar los datos guardados en ESTE navegador en el espacio compartido? SOLO hazlo si son ficticios o tienes autorización de la empresa.'))return;
+ const maybeArray=key=>{try{const x=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(x)?x:[];}catch(e){return [];}};
+ const maybeObject=key=>{try{const x=JSON.parse(localStorage.getItem(key)||'null');return x&&typeof x==='object'&&!Array.isArray(x)?x:{};}catch(e){return {};}};
+ records=maybeArray('alumalsa_miniapp_demo_v1');staff=maybeArray('alumalsa_personal_v02');absences=maybeArray('alumalsa_ausencias_v02');shiftOverrides=maybeArray('alumalsa_excepciones_v02');tasks=maybeArray('alumalsa_tasks_v03');otRecords=maybeArray('alumalsa_ots_v03');boardAssignments=maybeArray('alumalsa_board_v03');boardTargets=maybeObject('alumalsa_targets_v03');holidays=maybeArray('alumalsa_holidays_v03');
+ const count=records.length+staff.length+absences.length+shiftOverrides.length+tasks.length+otRecords.length+boardAssignments.length+holidays.length;
+ if(!count){alert('No se encontraron datos locales que importar en este navegador.');return;}
+ cloudSubmit(KINDS);redraw();renderPersonnel();renderV03();notify('◌ Importando '+count+' registros…');
+});
+guardButton('cloudInvite',async()=>{if(role!=='admin')throw Error('Solo el administrador puede crear invitaciones.');const {data,error}=await db.rpc('issue_invite',{p_workspace:workspace});if(error)throw error;
+ const url=appPublicUrl();url.searchParams.set('invite',data);
+ const details='INVITACIÓN ALUMALSA CONTROL DEMO\nAbre este enlace para crear tu cuenta o iniciar sesión. Al hacerlo entrarás automáticamente en el espacio compartido.\n\n'+url.href+'\n\nEnlace personal válido 48 horas y de un solo uso. No lo publiques en grupos.';
+ try{await navigator.clipboard.writeText(details);alert('Enlace de invitación copiado. Envíalo en privado.\n\n'+url.href+'\n\nNo uses una dirección 127.0.0.1 con usuarios de otros dispositivos.');}catch(e){prompt('Copia y envía este enlace privado:',url.href);}
+});
+// Local backup import and reset are deliberately disabled in shared mode.
+// The existing localStorage demo is not uploaded automatically.
+// Users must create their data explicitly in the shared workspace.
+window.addEventListener('offline',()=>{document.body.classList.add('is-offline');if(cloudActive)status('⚠ Sin conexión · no se pueden guardar cambios');});
+window.addEventListener('online',()=>{document.body.classList.remove('is-offline');if(cloudActive)scheduleRefresh();});
+if(!navigator.onLine)document.body.classList.add('is-offline');
+initDb();
+})();
+
+</script>
 </body>
 </html>
